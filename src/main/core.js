@@ -1,12 +1,11 @@
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
 const homeDir = os.homedir();
 
-
 const CLIENT_PATHS = {
-    lunar: path.join(homeDir, '.lunarclient', 'offline', 'multiver', 'logs', 'latest.log'), // Lunar Client log yolu
+    lunar: path.join(homeDir, '.lunarclient', 'offline', 'multiver', 'logs', 'latest.log'),
     badlion: 'path/to/badlion/logs/latest.log',
     vanilla: 'path/to/vanilla/logs/latest.log',
     labymod: 'path/to/labymod/logs/latest.log',
@@ -16,28 +15,46 @@ const CLIENT_PATHS = {
     raven: 'path/to/raven/logs/latest.log'
 };
 
-
-
-function readLogFile(client) {
+function readLogFile(client, callback) {
+    console.log(`Log dosyası okunuyor: Client: ${client}`);
     const logPath = CLIENT_PATHS[client];
     if (!logPath) {
+        console.error('Geçersiz client seçildi.');
         throw new Error('Invalid client selected');
     }
 
-    return fs.readFileSync(logPath, 'utf-8');
+    // Log dosyasının tam yolunu konsola yazdır
+    console.log(`Log dosyasının yolu: ${logPath}`);
+
+    // fs.watch yerine fs.watchFile kullanıyoruz
+    fs.watchFile(logPath, { interval: 1000 }, (curr, prev) => {
+        if (curr.mtime !== prev.mtime) {
+            console.log('Log dosyası değişti, yeniden okunuyor.');
+            const content = fs.readFileSync(logPath, 'utf-8');
+            callback(content);
+        }
+    });
 }
 
 function extractPlayersFromLog(logContent) {
-    const whoCommandLine = logContent.split('\n').find(line => line.includes('/who'));
+    console.log('Log dosyasından oyuncular çıkarılıyor.');
+    
+    // /who komutunun çıktısını bul
+    const whoCommandLine = logContent.split('\n').find(line => line.includes('[CHAT] ONLINE:'));
     if (!whoCommandLine) {
+        console.log('Log dosyasında /who komutu bulunamadı.');
         return [];
     }
 
-    const players = whoCommandLine.match(/\[.*\]\s(\w+)/g);
-    return players ? players.map(player => player.split(' ')[1]) : [];
+    // ONLINE: kısmından sonraki oyuncu isimlerini al
+    const playersPart = whoCommandLine.split('[CHAT] ONLINE:')[1].trim();
+    const players = playersPart.split(', '); // Oyuncu isimlerini virgülle ayır
+
+    console.log('Oyuncular bulundu:', players);
+    return players;
 }
 
 module.exports = {
     extractPlayersFromLog,
     readLogFile
-}
+};

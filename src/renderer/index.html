@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: rgba(0, 0, 0, 0.5); /* Şeffaf arkaplan */
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
             font-size: 18px;
             margin: 0;
@@ -19,11 +19,11 @@
         }
         .client-selection {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 sütun */
-            grid-template-rows: repeat(2, 1fr); /* 2 satır */
-            gap: 10px; /* Kutucuklar arası boşluk */
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
             width: 80%;
-            max-width: 600px; /* Maksimum genişlik */
+            max-width: 600px;
         }
         .client-card {
             background-color: rgba(0, 0, 0, 0.8);
@@ -35,12 +35,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 80px; /* Kutucuk yüksekliği */
+            height: 80px;
         }
         .client-card:hover {
             transform: scale(1.05);
         }
-        /* Her kutucuğa farklı renkler */
         .client-card[data-client="lunar"] { background-color: #FF6B6B; }
         .client-card[data-client="badlion"] { background-color: #4ECDC4; }
         .client-card[data-client="vanilla"] { background-color: #FFE66D; }
@@ -50,7 +49,7 @@
         .client-card[data-client="opal"] { background-color: #A8DADC; }
         .client-card[data-client="raven"] { background-color: #B8B8FF; }
         #overlay-content {
-            display: none; /* Başlangıçta gizli */
+            display: none;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 10px;
@@ -74,7 +73,6 @@
         .star-400-500 { color: darkgreen; }
         .fk-0-500 { color: grey; }
         .fk-500-1000 { color: white; }
-        /* Diğer renk sınıflarını buraya ekleyebilirsiniz */
     </style>
 </head>
 <body>
@@ -127,75 +125,56 @@
         </table>
     </div>
     <script>
-        
-        // Client kutucuklarına tıklama olayı ekle
+        console.log('Renderer script yüklendi.');
+
         document.querySelectorAll('.client-card').forEach(card => {
             card.addEventListener('click', () => {
                 const selectedClient = card.getAttribute('data-client');
-                console.log('Selected client:', selectedClient); // Seçilen client'ı kontrol et
+                console.log('Client seçildi:', selectedClient);
 
-                // Client seçim ekranını gizle ve overlay içeriğini göster
                 document.getElementById('client-selection').style.display = 'none';
                 document.getElementById('overlay-content').style.display = 'block';
 
-                // API key doğrulama ve istatistikleri çekme işlemlerini başlat
                 const apiKey = document.getElementById('api-key-input').value;
                 if (apiKey) {
+                    console.log('API anahtarı ile istatistikler isteniyor.');
                     Electron.sendMessage('request-player-stats', { apiKey, client: selectedClient });
-                } else {
-                    // alert('Please enter a valid API Key.');
                 }
             });
         });
 
-        // API key doğrulama butonuna tıklandığında
         document.getElementById('validate-api-key').addEventListener('click', () => {
             const apiKeyInput = document.getElementById('api-key-input');
-            const apiKey = apiKeyInput.value.trim(); // API anahtarını al ve boşlukları temizle
+            const apiKey = apiKeyInput.value.trim();
 
             if (!apiKey) {
+                console.log('API anahtarı girilmedi.');
                 alert('Please enter an API key.');
                 return;
             }
 
-            // Electron üzerinden API doğrulama isteği gönder
+            console.log('API anahtarı doğrulanıyor.');
             Electron.sendMessage('validate-api-key', apiKey);
         });
 
-        // API key doğrulama sonucunu dinle
         Electron.receiveMessage('api-key-validation', (valid) => {
             const apiKeyInput = document.getElementById('api-key-input');
 
             if (valid) {
+                console.log('API anahtarı geçerli.');
                 alert('The API key is valid!');
             } else {
+                console.log('API anahtarı geçersiz.');
                 alert('This is not a valid API key. Please try again.');
             }
 
-            // Giriş alanını temizle
             apiKeyInput.value = '';
         });
 
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            return
-            Electron.receiveMessage('api-key-validation', (isValid) => {
-            console.log(isValid)
-            if (isValid) {
-                alert('API Key is valid!');
-                const selectedClient = document.querySelector('.client-card[data-selected="true"]').getAttribute('data-client');
-                Electron.sendMessage('request-player-stats', { apiKey: document.getElementById('api-key-input').value, client: selectedClient });
-            } else {
-                alert('Invalid API Key');
-            }
-        });
-
-        // İstatistikler alındığında
-        Electron.receiveMessage('player-stats-response', (event, stats) => {
-            console.log(stats   )
+        Electron.receiveMessage('player-stats-response', (stats) => {
+            console.log('Oyuncu istatistikleri alındı, tabloya ekleniyor.');
             const tableBody = document.querySelector('#stats-table tbody');
-            tableBody.innerHTML = ''; // Önceki sonuçları temizle
+            tableBody.innerHTML = '';
             stats.forEach((stat, index) => {
                 const row = document.createElement('tr');
                 const starClass = getStarClass(stat.stars);
@@ -214,9 +193,7 @@
                 tableBody.appendChild(row);
             });
         });
-        })
 
-        // Yıldız sayısına göre renk sınıfı belirleme
         function getStarClass(stars) {
             if (stars >= 0 && stars < 100) return 'star-0-100';
             if (stars >= 100 && stars < 200) return 'star-100-200';
@@ -226,14 +203,11 @@
             return '';
         }
 
-        // Final kill sayısına göre renk sınıfı belirleme
         function getFKClass(finalKills) {
             if (finalKills >= 0 && finalKills < 500) return 'fk-0-500';
             if (finalKills >= 500 && finalKills < 1000) return 'fk-500-1000';
-            // Diğer aralıklar için sınıflar ekleyebilirsiniz
             return '';
         }
     </script>
-    
 </body>
 </html>
