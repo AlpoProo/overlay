@@ -1,81 +1,15 @@
-import path from 'path';
-import { app, BrowserWindow, ipcMain } from "electron";
-import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main';
-import axios from 'axios';
-import fs from 'fs';
-import os from 'os'; // Kullanıcının home dizinini almak için
+const path = require('path')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const axios = require('axios')
 
 let mainWindow;
 
 const HYPIXEL_API_URL = 'https://api.hypixel.net/key';
 const HYPIXEL_PLAYER_STATS_URL = 'https://api.hypixel.net/player';
 
-// Kullanıcının home dizinini al
-const homeDir = os.homedir();
+const api = require('./api.js')
+const core = require('./core.js')
 
-const CLIENT_PATHS = {
-    lunar: path.join(homeDir, '.lunarclient', 'offline', 'multiver', 'logs', 'latest.log'), // Lunar Client log yolu
-    badlion: 'path/to/badlion/logs/latest.log',
-    vanilla: 'path/to/vanilla/logs/latest.log',
-    labymod: 'path/to/labymod/logs/latest.log',
-    myau: 'path/to/myau/logs/latest.log',
-    adjust: 'path/to/adjust/logs/latest.log',
-    opal: 'path/to/opal/logs/latest.log',
-    raven: 'path/to/raven/logs/latest.log'
-};
-
-async function validateApiKey(apiKey) {
-    try {
-        const response = await axios.get(HYPIXEL_API_URL, {
-            params: {
-                key: apiKey
-            }
-        });
-        return response.data.success;
-    } catch (error) {
-        console.error('API key validation failed:', error);
-        return false;
-    }
-}
-
-function readLogFile(client) {
-    const logPath = CLIENT_PATHS[client];
-    if (!logPath) {
-        throw new Error('Invalid client selected');
-    }
-
-    return fs.readFileSync(logPath, 'utf-8');
-}
-
-function extractPlayersFromLog(logContent) {
-    const whoCommandLine = logContent.split('\n').find(line => line.includes('/who'));
-    if (!whoCommandLine) {
-        return [];
-    }
-
-    const players = whoCommandLine.match(/\[.*\]\s(\w+)/g);
-    return players ? players.map(player => player.split(' ')[1]) : [];
-}
-
-async function getPlayerStats(apiKey, playerName) {
-    try {
-        const response = await axios.get(HYPIXEL_PLAYER_STATS_URL, {
-            params: {
-                key: apiKey,
-                name: playerName
-            }
-        });
-        return response.data.player.stats.Bedwars;
-    } catch (error) {
-        console.error(`Failed to fetch stats for player ${playerName}:`, error);
-        return null;
-    }
-}
-
-async function getAllPlayersStats(apiKey, players) {
-    const statsPromises = players.map(player => getPlayerStats(apiKey, player));
-    return await Promise.all(statsPromises);
-}
 
 app.on('ready', () => {
     mainWindow = new BrowserWindow({
@@ -86,24 +20,32 @@ app.on('ready', () => {
         transparent: true, // Arkaplanı şeffaf yap
         frame: false, // Pencere çerçevesini kaldır
         webPreferences: {
-            preload: path.join(import.meta.dirname, 'preload.js'), // Optional
+            preload: path.join(__dirname, 'preload.js'), // Absolute path for preload
             nodeIntegration: true,
             contextIsolation: true
         },
     });
 
-    mainWindow.loadFile(path.join(import.meta.dirname, '../renderer/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+
+    if (process.argv[2] && process.argv[2].startsWith('dev')) {
+        mainWindow.webContents.toggleDevTools(); // Open DevTools in development mode
+    }
 
     ipcMain.on('validate-api-key', async (event, apiKey) => {
-        const isValid = await validateApiKey(apiKey);
-        event.reply('api-key-validation-result', isValid);
+
+        
+        const isValid = await api.validateApiKey(apiKey);
+        
+        mainWindow.webContents.send('api-key-validation', isValid)
+        // bu çalışmıyo gibi event.reply('api-key-validation-result', isValid);
     });
 
     ipcMain.on('request-player-stats', async (event, { apiKey, client }) => {
         const logContent = readLogFile(client);
         const players = extractPlayersFromLog(logContent);
         const stats = await getAllPlayersStats(apiKey, players);
-        event.reply('player-stats-response', stats);
+        mainWindow.webContents.send('player-stats-response', stats);
     });
 });
 

@@ -126,10 +126,8 @@
             </tbody>
         </table>
     </div>
-
     <script>
-        const { ipcRenderer } = require('electron');
-
+        
         // Client kutucuklarına tıklama olayı ekle
         document.querySelectorAll('.client-card').forEach(card => {
             card.addEventListener('click', () => {
@@ -143,9 +141,9 @@
                 // API key doğrulama ve istatistikleri çekme işlemlerini başlat
                 const apiKey = document.getElementById('api-key-input').value;
                 if (apiKey) {
-                    ipcRenderer.send('request-player-stats', { apiKey, client: selectedClient });
+                    Electron.sendMessage('request-player-stats', { apiKey, client: selectedClient });
                 } else {
-                    alert('Please enter a valid API Key.');
+                    // alert('Please enter a valid API Key.');
                 }
             });
         });
@@ -153,22 +151,36 @@
         // API key doğrulama butonuna tıklandığında
         document.getElementById('validate-api-key').addEventListener('click', () => {
             const apiKey = document.getElementById('api-key-input').value;
-            ipcRenderer.send('validate-api-key', apiKey);
+            Electron.sendMessage('validate-api-key', apiKey);
         });
 
+        Electron.receiveMessage('api-key-validation', valid => {
+            console.log(valid)
+            if(!valid) alert('This is not a valid api key')
+            document.getElementById('api-key-input').value = ''
+        })
+
         // API key doğrulama sonucu
-        ipcRenderer.on('api-key-validation-result', (event, isValid) => {
+        
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            return
+            Electron.receiveMessage('api-key-validation', (isValid) => {
+            console.log(isValid)
             if (isValid) {
                 alert('API Key is valid!');
                 const selectedClient = document.querySelector('.client-card[data-selected="true"]').getAttribute('data-client');
-                ipcRenderer.send('request-player-stats', { apiKey: document.getElementById('api-key-input').value, client: selectedClient });
+                Electron.sendMessage('request-player-stats', { apiKey: document.getElementById('api-key-input').value, client: selectedClient });
             } else {
                 alert('Invalid API Key');
             }
         });
 
         // İstatistikler alındığında
-        ipcRenderer.on('player-stats-response', (event, stats) => {
+        Electron.receiveMessage('player-stats-response', (event, stats) => {
+            console.log(stats   )
             const tableBody = document.querySelector('#stats-table tbody');
             tableBody.innerHTML = ''; // Önceki sonuçları temizle
             stats.forEach((stat, index) => {
@@ -189,6 +201,7 @@
                 tableBody.appendChild(row);
             });
         });
+        })
 
         // Yıldız sayısına göre renk sınıfı belirleme
         function getStarClass(stars) {
@@ -208,5 +221,6 @@
             return '';
         }
     </script>
+    
 </body>
 </html>

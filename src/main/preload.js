@@ -1,6 +1,4 @@
-const { Titlebar, TitlebarColor } = require('custom-electron-titlebar')
-const { app, contextBridge } = require('electron')
-
+const { app, contextBridge, ipcRenderer } = require('electron')
 
 // electron main process ve renderer arasındaki köprüdür.
 // tarayıcı javascript ortamına server'dan nelerin yükleneceğini belirtir
