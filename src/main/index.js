@@ -40,17 +40,33 @@ app.on('ready', () => {
         mainWindow.webContents.send('api-key-validation', isValid);
     });
 
+
+    let playerCache = ""
+
+    let statCache
     ipcMain.on('request-player-stats', async (event, { apiKey, client }) => {
         console.log(`Oyuncu istatistikleri isteniyor. Client: ${client}, API Key: ${apiKey}`);
         core.readLogFile(client, async (logContent) => {
             console.log('Log dosyası okundu, oyuncular çıkarılıyor.');
             const players = core.extractPlayersFromLog(logContent);
+            
             if (players.length > 0) {
                 console.log('Oyuncular bulundu:', players);
-                const stats = await api.getAllPlayersStats(apiKey, players);
-                console.log('Oyuncu istatistikleri alındı:', stats);
-                mainWindow.webContents.send('player-stats-response', stats);
-            } else {
+                if(players.join(',') === playerCache){
+                    consoled.yellow('oyuncu verisi zaten çekilmiş')
+                    if(statCache) return mainWindow.webContents.send('player-stats-response', statCache);
+                    else return mainWindow.webContents.send('player-stats-response', []);
+                }
+                else{
+                    const stats = await api.getAllPlayersStats(apiKey, players);
+                    console.log('Oyuncu istatistikleri alındı:', stats);
+                    mainWindow.webContents.send('player-stats-response', stats);
+                    statCache = stats;
+                    
+                }
+                playerCache = players.map(item => item.name).join(',')
+                
+            } else {    
                 console.log('Log dosyasında oyuncu bulunamadı.');
             }
         });

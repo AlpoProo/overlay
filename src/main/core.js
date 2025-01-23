@@ -38,8 +38,6 @@ function readLogFile(client, callback) {
         throw new Error('Log file not found');
     }
 
-
-
     
     // Log dosyasını eşzamanlı olarak izle
     fs.watchFile(logPath, { interval: 10000 }, (curr, prev) => {
