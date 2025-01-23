@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bedwars Overlay</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: rgba(128, 128, 128, 0.8);
+            color: white;
+            font-size: 18px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .star-0-100 { color: grey; }
+        .star-100-200 { color: white; }
+        .star-200-300 { color: gold; }
+        .star-300-400 { color: aqua; }
+        .star-400-500 { color: darkgreen; }
+        .fk-0-500 { color: grey; }
+        .fk-500-1000 { color: white; }
+        /* Diğer renk sınıflarını buraya ekleyebilirsiniz */
+    </style>
+</head>
+<body>
+    <div id="api-key-form">
+        <input type="text" id="api-key-input" placeholder="Enter Hypixel API Key">
+        <button id="validate-api-key">Validate API Key</button>
+    </div>
+    <div id="client-selection" style="display: none;">
+        <select id="client-select">
+            <option value="lunar">Lunar</option>
+            <option value="badlion">Badlion</option>
+            <option value="vanilla">Vanilla</option>
+            <option value="labymod">LabyMod</option>
+            <option value="myau">Myau</option>
+            <option value="adjust">Adjust</option>
+            <option value="opal">Opal</option>
+            <option value="raven">Raven</option>
+        </select>
+        <button id="fetch-stats">Fetch Stats</button>
+    </div>
+    <table id="stats-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Stars</th>
+                <th>Final Kills</th>
+                <th>Kills</th>
+                <th>FKDR</th>
+                <th>WLR</th>
+                <th>Wins</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- İstatistikler buraya eklenecek -->
+        </tbody>
+    </table>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('validate-api-key').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key-input').value;
+            ipcRenderer.send('validate-api-key', apiKey);
+        });
+
+        ipcRenderer.on('api-key-validation-result', (event, isValid) => {
+            if (isValid) {
+                document.getElementById('api-key-form').style.display = 'none';
+                document.getElementById('client-selection').style.display = 'block';
+            } else {
+                alert('Invalid API Key');
+            }
+        });
+
+        document.getElementById('fetch-stats').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key-input').value;
+            const client = document.getElementById('client-select').value;
+            ipcRenderer.send('request-player-stats', { apiKey, client });
+        });
+
+        ipcRenderer.on('player-stats-response', (event, stats) => {
+            const tableBody = document.querySelector('#stats-table tbody');
+            tableBody.innerHTML = ''; // Clear previous results
+            stats.forEach((stat, index) => {
+                const row = document.createElement('tr');
+                const starClass = getStarClass(stat.stars);
+                const fkClass = getFKClass(stat.finalKills);
+
+                row.innerHTML = `
+                    <td>Player ${index + 1}</td>
+                    <td class="${starClass}">${stat.stars}</td>
+                    <td class="${fkClass}">${stat.finalKills}</td>
+                    <td>${stat.kills}</td>
+                    <td>${stat.fkdr}</td>
+                    <td>${stat.wlr}</td>
+                    <td>${stat.wins}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        });
+
+        function getStarClass(stars) {
+            if (stars >= 0 && stars < 100) return 'star-0-100';
+            if (stars >= 100 && stars < 200) return 'star-100-200';
+            if (stars >= 200 && stars < 300) return 'star-200-300';
+            if (stars >= 300 && stars < 400) return 'star-300-400';
+            if (stars >= 400 && stars < 500) return 'star-400-500';
+            return '';
+        }
+
+        function getFKClass(finalKills) {
+            if (finalKills >= 0 && finalKills < 500) return 'fk-0-500';
+            if (finalKills >= 500 && finalKills < 1000) return 'fk-500-1000';
+            // Diğer aralıklar için sınıflar ekleyebilirsiniz
+            return '';
+        }
+    </script>
+</body>
+</html>
