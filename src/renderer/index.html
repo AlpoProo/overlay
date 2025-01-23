@@ -187,7 +187,7 @@
 
         // İstatistikler alındığında
         Electron.receiveMessage('player-stats-response', (stats) => {
-            console.log('Oyuncu istatistikleri alındı, tabloya ekleniyor.');
+            console.log(stats)
             const tableBody = document.querySelector('#stats-table tbody');
             tableBody.innerHTML = '';
             stats.forEach((stat, index) => {

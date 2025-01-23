@@ -24,14 +24,13 @@ const CLIENT_PATHS = {
  * @param {function} callback - Yeni log verileri geldiğinde çağrılacak fonksiyon.
  */
 function readLogFile(client, callback) {
-    console.log(`Log dosyası okunuyor: Client: ${client}`);
     const logPath = CLIENT_PATHS[client];
     if (!logPath) {
         console.error('Geçersiz client seçildi.');
         throw new Error('Invalid client selected');
     }
 
-    console.log(`Log dosyasının yolu: ${logPath}`);
+    consoled.bright.cyan(`Client: ${client} | Logfile: ${logPath}`);
 
     if (!fs.existsSync(logPath)) {
         console.error('Log dosyası bulunamadı:', logPath);
@@ -42,7 +41,6 @@ function readLogFile(client, callback) {
     // Log dosyasını eşzamanlı olarak izle
     fs.watchFile(logPath, { interval: 10000 }, (curr, prev) => {
         if (curr.mtime !== prev.mtime) {
-            console.log('Log dosyası değişti, yeniden okunuyor.');
 
             // Log dosyasının son 1024 byte'ını oku
             const fileSize = fs.statSync(logPath).size;
@@ -68,12 +66,11 @@ function readLogFile(client, callback) {
  * @returns {string[]} Oyuncu isimlerinin listesi.
  */
 function extractPlayersFromLog(logContent) {
-    console.log('Log dosyasından oyuncular çıkarılıyor.');
+
 
     // /who komutunun çıktısını bul
     const whoCommandLine = logContent.split('\n').find(line => line.includes('[CHAT] ONLINE:'));
     if (!whoCommandLine) {
-        console.log('Log dosyasında /who komutu bulunamadı.');
         return [];
     }
 
@@ -91,13 +88,9 @@ function extractPlayersFromLog(logContent) {
  */
 function onLogUpdate(content) {
     const players = extractPlayersFromLog(content);
-    console.log('Bulunan oyuncular:', players);
 }
 
-// Örnek kullanım
-try {
-    // Lunar client için log dosyasını izlemeye başla
-    readLogFile('lunar', onLogUpdate);
-} catch (error) {
-    console.error('Hata:', error.message);
+module.exports = {
+    readLogFile,
+    extractPlayersFromLog,
 }
