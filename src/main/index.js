@@ -1,14 +1,10 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
-const axios = require('axios');
-
-let mainWindow;
-
-const HYPIXEL_API_URL = 'https://api.hypixel.net/key';
-const HYPIXEL_PLAYER_STATS_URL = 'https://api.hypixel.net/player';
 
 const api = require('./api.js');
 const core = require('./core.js');
+
+let mainWindow;
 
 app.on('ready', () => {
     console.log('Uygulama başlatıldı.');

@@ -23,14 +23,29 @@ function readLogFile(client, callback) {
         throw new Error('Invalid client selected');
     }
 
-    // Log dosyasının tam yolunu konsola yazdır
     console.log(`Log dosyasının yolu: ${logPath}`);
 
-    // fs.watch yerine fs.watchFile kullanıyoruz
+    if (!fs.existsSync(logPath)) {
+        console.error('Log dosyası bulunamadı:', logPath);
+        throw new Error('Log file not found');
+    }
+
+    // Log dosyasını eşzamanlı olarak izle
     fs.watchFile(logPath, { interval: 1000 }, (curr, prev) => {
         if (curr.mtime !== prev.mtime) {
             console.log('Log dosyası değişti, yeniden okunuyor.');
-            const content = fs.readFileSync(logPath, 'utf-8');
+
+            // Log dosyasının son 1024 byte'ını oku
+            const fileSize = fs.statSync(logPath).size;
+            const bufferSize = 1024; // Son 1024 byte'ı oku
+            const buffer = Buffer.alloc(bufferSize);
+
+            const fd = fs.openSync(logPath, 'r');
+            fs.readSync(fd, buffer, 0, bufferSize, fileSize - bufferSize);
+            fs.closeSync(fd);
+
+            const content = buffer.toString('utf-8');
+            console.log('Log dosyasının son kısmı okundu.');
             callback(content);
         }
     });

@@ -29,11 +29,44 @@ async function getPlayerStats(apiKey, playerName) {
                 name: playerName
             }
         });
-        console.log(`Oyuncu istatistikleri başarıyla alındı: ${playerName}`);
-        return response.data.player.stats.Bedwars;
+
+        const playerData = response.data.player;
+        if (!playerData) {
+            console.log(`Oyuncu bulunamadı: ${playerName}`);
+            return {
+                name: playerName,
+                stars: "N/A",
+                wins: "N/A",
+                losses: "N/A",
+                finalKills: "N/A"
+            };
+        }
+
+        const stats = playerData.stats?.Bedwars || {};
+        const stars = playerData.achievements?.bedwars_level || "N/A";
+        const wins = stats.wins_bedwars || "N/A";
+        const losses = stats.losses_bedwars || "N/A";
+        const finalKills = stats.final_kills_bedwars || "N/A";
+
+        console.log(`Oyuncu istatistikleri alındı: ${playerName}`);
+        console.log(`Stars: ${stars}, Wins: ${wins}, Losses: ${losses}, Final Kills: ${finalKills}`);
+
+        return {
+            name: playerName,
+            stars,
+            wins,
+            losses,
+            finalKills
+        };
     } catch (error) {
         console.error(`Oyuncu istatistikleri alınamadı: ${playerName}`, error);
-        return null;
+        return {
+            name: playerName,
+            stars: "N/A",
+            wins: "N/A",
+            losses: "N/A",
+            finalKills: "N/A"
+        };
     }
 }
 

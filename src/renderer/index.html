@@ -112,11 +112,9 @@
                 <tr>
                     <th>Player</th>
                     <th>Stars</th>
-                    <th>Final Kills</th>
-                    <th>Kills</th>
-                    <th>FKDR</th>
-                    <th>WLR</th>
                     <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Final Kills</th>
                 </tr>
             </thead>
             <tbody>
@@ -127,14 +125,23 @@
     <script>
         console.log('Renderer script yüklendi.');
 
+        // Client kartlarına tıklama olayı ekle
         document.querySelectorAll('.client-card').forEach(card => {
             card.addEventListener('click', () => {
+                // Tüm client kartlarındaki seçim işaretini kaldır
+                document.querySelectorAll('.client-card').forEach(c => c.removeAttribute('data-selected'));
+
+                // Tıklanan client kartını seçili olarak işaretle
+                card.setAttribute('data-selected', 'true');
+
                 const selectedClient = card.getAttribute('data-client');
                 console.log('Client seçildi:', selectedClient);
 
+                // Client seçim ekranını gizle ve overlay içeriğini göster
                 document.getElementById('client-selection').style.display = 'none';
                 document.getElementById('overlay-content').style.display = 'block';
 
+                // API key doğrulama ve istatistikleri çekme işlemlerini başlat
                 const apiKey = document.getElementById('api-key-input').value;
                 if (apiKey) {
                     console.log('API anahtarı ile istatistikler isteniyor.');
@@ -143,6 +150,7 @@
             });
         });
 
+        // API key doğrulama butonuna tıklandığında
         document.getElementById('validate-api-key').addEventListener('click', () => {
             const apiKeyInput = document.getElementById('api-key-input');
             const apiKey = apiKeyInput.value.trim();
@@ -157,12 +165,18 @@
             Electron.sendMessage('validate-api-key', apiKey);
         });
 
+        // API key doğrulama sonucunu dinle
         Electron.receiveMessage('api-key-validation', (valid) => {
             const apiKeyInput = document.getElementById('api-key-input');
 
             if (valid) {
                 console.log('API anahtarı geçerli.');
                 alert('The API key is valid!');
+
+                // API anahtarı doğrulandıktan sonra, seçilen client ile istatistikleri iste
+                const selectedClient = document.querySelector('.client-card[data-selected="true"]').getAttribute('data-client');
+                console.log('Seçilen client:', selectedClient);
+                Electron.sendMessage('request-player-stats', { apiKey: apiKeyInput.value, client: selectedClient });
             } else {
                 console.log('API anahtarı geçersiz.');
                 alert('This is not a valid API key. Please try again.');
@@ -171,6 +185,7 @@
             apiKeyInput.value = '';
         });
 
+        // İstatistikler alındığında
         Electron.receiveMessage('player-stats-response', (stats) => {
             console.log('Oyuncu istatistikleri alındı, tabloya ekleniyor.');
             const tableBody = document.querySelector('#stats-table tbody');
@@ -181,19 +196,18 @@
                 const fkClass = getFKClass(stat.finalKills);
 
                 row.innerHTML = `
-                    <td>Player ${index + 1}</td>
+                    <td>${stat.name}</td>
                     <td class="${starClass}">${stat.stars}</td>
-                    <td class="${fkClass}">${stat.finalKills}</td>
-                    <td>${stat.kills}</td>
-                    <td>${stat.fkdr}</td>
-                    <td>${stat.wlr}</td>
                     <td>${stat.wins}</td>
+                    <td>${stat.losses}</td>
+                    <td class="${fkClass}">${stat.finalKills}</td>
                 `;
 
                 tableBody.appendChild(row);
             });
         });
 
+        // Yıldız sayısına göre renk sınıfı belirleme
         function getStarClass(stars) {
             if (stars >= 0 && stars < 100) return 'star-0-100';
             if (stars >= 100 && stars < 200) return 'star-100-200';
@@ -203,6 +217,7 @@
             return '';
         }
 
+        // Final kill sayısına göre renk sınıfı belirleme
         function getFKClass(finalKills) {
             if (finalKills >= 0 && finalKills < 500) return 'fk-0-500';
             if (finalKills >= 500 && finalKills < 1000) return 'fk-500-1000';
