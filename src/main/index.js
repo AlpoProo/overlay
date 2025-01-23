@@ -1,5 +1,4 @@
 import path from 'path'
-import.meta.dirname
 import { app, BrowserWindow, ipcMain } from "electron";
 import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main'
 
@@ -21,7 +20,7 @@ app.on('ready', () => {
 
     // sunucu ve client eventler tetikleyerek ve arg göndererek iletişim kuruyo
     
-    ipcMain('message-from-renderer', (event, args) => {
+    ipcMain.on('message-from-renderer', (event, args) => {
         console.log('event triggered from client')
         event.reply('message-from-main', [])
 
