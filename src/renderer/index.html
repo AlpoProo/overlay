@@ -150,18 +150,31 @@
 
         // API key doğrulama butonuna tıklandığında
         document.getElementById('validate-api-key').addEventListener('click', () => {
-            const apiKey = document.getElementById('api-key-input').value;
+            const apiKeyInput = document.getElementById('api-key-input');
+            const apiKey = apiKeyInput.value.trim(); // API anahtarını al ve boşlukları temizle
+
+            if (!apiKey) {
+                alert('Please enter an API key.');
+                return;
+            }
+
+            // Electron üzerinden API doğrulama isteği gönder
             Electron.sendMessage('validate-api-key', apiKey);
         });
 
-        Electron.receiveMessage('api-key-validation', valid => {
-            console.log(valid)
-            if(!valid) alert('This is not a valid api key')
-            document.getElementById('api-key-input').value = ''
-        })
+        // API key doğrulama sonucunu dinle
+        Electron.receiveMessage('api-key-validation', (valid) => {
+            const apiKeyInput = document.getElementById('api-key-input');
 
-        // API key doğrulama sonucu
-        
+            if (valid) {
+                alert('The API key is valid!');
+            } else {
+                alert('This is not a valid API key. Please try again.');
+            }
+
+            // Giriş alanını temizle
+            apiKeyInput.value = '';
+        });
 
 
         document.addEventListener('DOMContentLoaded', () => {

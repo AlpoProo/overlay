@@ -1,21 +1,22 @@
 
-const HYPIXEL_API_URL = 'https://api.hypixel.net/key';
+const HYPIXEL_API_URL = 'https://api.hypixel.net';
 const HYPIXEL_PLAYER_STATS_URL = 'https://api.hypixel.net/player';
 
 const axios = require('axios')
 
 async function validateApiKey(apiKey) {
     try {
-        const response = await axios.get(HYPIXEL_API_URL, {
+        const response = await axios.get(`${HYPIXEL_API_URL}/punishmentstats`, {
             headers: {
                 'API-Key': apiKey
             }
         });
 
-        return response.data.success;
+        return response.data.success; // Eğer API anahtarı geçerliyse true döner.
     } catch (error) {
-        console.error('API key validation failed:', error);
-        return false;
+        console.error('API key validation failed:', error.response?.data || error.message);
+
+        return false; // Hata durumunda false döner.
     }
 }
 
