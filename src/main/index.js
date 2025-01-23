@@ -1,6 +1,9 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 
+const consoled = require('consoled.js')
+
+
 const api = require('./api.js');
 const core = require('./core.js');
 
@@ -12,6 +15,7 @@ app.on('ready', () => {
         width: 800,
         height: 600,
         titleBarOverlay: false,
+        alwaysOnTop: false,
         titleBarStyle: 'hidden',
         transparent: true,
         frame: false,

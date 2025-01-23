@@ -1,3 +1,4 @@
+const consoled = require('consoled.js');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -37,8 +38,11 @@ function readLogFile(client, callback) {
         throw new Error('Log file not found');
     }
 
+
+
+    
     // Log dosyasını eşzamanlı olarak izle
-    fs.watchFile(logPath, { interval: 1000 }, (curr, prev) => {
+    fs.watchFile(logPath, { interval: 10000 }, (curr, prev) => {
         if (curr.mtime !== prev.mtime) {
             console.log('Log dosyası değişti, yeniden okunuyor.');
 
@@ -52,10 +56,12 @@ function readLogFile(client, callback) {
             fs.closeSync(fd);
 
             const content = buffer.toString('utf-8');
-            console.log('Log dosyasının son kısmı okundu.');
+            consoled.bright.blue('log dosyasının sonu okundu')
             callback(content);
         }
     });
+
+    
 }
 
 /**
@@ -77,7 +83,7 @@ function extractPlayersFromLog(logContent) {
     const playersPart = whoCommandLine.split('[CHAT] ONLINE:')[1].trim();
     const players = playersPart.split(', '); // Oyuncu isimlerini virgülle ayır
 
-    console.log('Oyuncular bulundu:', players);
+    consoled.green('extractPlayersFromLog executed')
     return players;
 }
 

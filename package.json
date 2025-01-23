@@ -19,6 +19,7 @@
   "homepage": "https://github.com/AlpoProo/overlay#readme",
   "dependencies": {
     "axios": "^1.7.9",
+    "consoled.js": "^1.0.4",
     "custom-electron-titlebar": "^4.2.8",
     "electron": "^34.0.1"
   }
