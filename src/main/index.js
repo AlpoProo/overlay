@@ -1,3 +1,5 @@
+import path from 'path'
+import.meta.dirname
 import { app, BrowserWindow, ipcMain } from "electron";
 import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main'
 
@@ -10,7 +12,7 @@ app.on('ready', () => {
         titleBarOverlay: false,
         titleBarStyle: 'hidden',
         webPreferences: {
-        preload: path.join(__dirname, 'preload.js'), // Optional
+        preload: path.join(import.meta.dirname, 'preload.js'), // Optional
         nodeIntegration: true,
         contextIsolation: true
         },
