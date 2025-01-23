@@ -13,6 +13,7 @@ async function validateApiKey(apiKey) {
         });
 
         console.log('API anahtarı doğrulama başarılı.');
+        console.log('API Yanıtı:', response.data); // Yanıtı konsola yazdır
         return response.data.success;
     } catch (error) {
         console.error('API anahtarı doğrulama başarısız:', error.response?.data || error.message);
@@ -29,6 +30,8 @@ async function getPlayerStats(apiKey, playerName) {
                 name: playerName
             }
         });
+
+        console.log('API Yanıtı:', response.data); // Yanıtı konsola yazdır
 
         const playerData = response.data.player;
         if (!playerData) {
