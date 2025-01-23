@@ -2,8 +2,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+// Kullanıcının ana dizini
 const homeDir = os.homedir();
 
+// Log dosyalarının yolları
 const CLIENT_PATHS = {
     lunar: path.join(homeDir, '.lunarclient', 'offline', 'multiver', 'logs', 'latest.log'),
     badlion: 'path/to/badlion/logs/latest.log',
@@ -15,6 +17,11 @@ const CLIENT_PATHS = {
     raven: 'path/to/raven/logs/latest.log'
 };
 
+/**
+ * Belirtilen log dosyasını izler ve değişiklik olduğunda callback fonksiyonunu çağırır.
+ * @param {string} client - İzlenecek client türü (örneğin: "lunar").
+ * @param {function} callback - Yeni log verileri geldiğinde çağrılacak fonksiyon.
+ */
 function readLogFile(client, callback) {
     console.log(`Log dosyası okunuyor: Client: ${client}`);
     const logPath = CLIENT_PATHS[client];
@@ -51,9 +58,14 @@ function readLogFile(client, callback) {
     });
 }
 
+/**
+ * Log dosyasından /who komutunu analiz eder ve oyuncu isimlerini çıkarır.
+ * @param {string} logContent - Log dosyasının içeriği.
+ * @returns {string[]} Oyuncu isimlerinin listesi.
+ */
 function extractPlayersFromLog(logContent) {
     console.log('Log dosyasından oyuncular çıkarılıyor.');
-    
+
     // /who komutunun çıktısını bul
     const whoCommandLine = logContent.split('\n').find(line => line.includes('[CHAT] ONLINE:'));
     if (!whoCommandLine) {
@@ -69,7 +81,19 @@ function extractPlayersFromLog(logContent) {
     return players;
 }
 
-module.exports = {
-    extractPlayersFromLog,
-    readLogFile
-};
+/**
+ * Örnek bir callback fonksiyonu: Oyuncu isimlerini log dosyasından çekip konsola yazdırır.
+ * @param {string} content - Log dosyasından gelen içerik.
+ */
+function onLogUpdate(content) {
+    const players = extractPlayersFromLog(content);
+    console.log('Bulunan oyuncular:', players);
+}
+
+// Örnek kullanım
+try {
+    // Lunar client için log dosyasını izlemeye başla
+    readLogFile('lunar', onLogUpdate);
+} catch (error) {
+    console.error('Hata:', error.message);
+}
