@@ -7,13 +7,60 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: rgba(128, 128, 128, 0.8);
+            background-color: rgba(0, 0, 0, 0.5); /* Şeffaf arkaplan */
             color: white;
             font-size: 18px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .client-selection {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 sütun */
+            grid-template-rows: repeat(2, 1fr); /* 2 satır */
+            gap: 10px; /* Kutucuklar arası boşluk */
+            width: 80%;
+            max-width: 600px; /* Maksimum genişlik */
+        }
+        .client-card {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px; /* Kutucuk yüksekliği */
+        }
+        .client-card:hover {
+            transform: scale(1.05);
+        }
+        /* Her kutucuğa farklı renkler */
+        .client-card[data-client="lunar"] { background-color: #FF6B6B; }
+        .client-card[data-client="badlion"] { background-color: #4ECDC4; }
+        .client-card[data-client="vanilla"] { background-color: #FFE66D; }
+        .client-card[data-client="labymod"] { background-color: #6B5B95; }
+        .client-card[data-client="myau"] { background-color: #88D8B0; }
+        .client-card[data-client="adjust"] { background-color: #FF9F1C; }
+        .client-card[data-client="opal"] { background-color: #A8DADC; }
+        .client-card[data-client="raven"] { background-color: #B8B8FF; }
+        #overlay-content {
+            display: none; /* Başlangıçta gizli */
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            background-color: rgba(0, 0, 0, 0.8);
         }
         th, td {
             padding: 10px;
@@ -31,66 +78,99 @@
     </style>
 </head>
 <body>
-    <div id="api-key-form">
-        <input type="text" id="api-key-input" placeholder="Enter Hypixel API Key">
-        <button id="validate-api-key">Validate API Key</button>
+    <div id="client-selection" class="client-selection">
+        <div class="client-card" data-client="lunar">
+            <h3>Lunar</h3>
+        </div>
+        <div class="client-card" data-client="badlion">
+            <h3>Badlion</h3>
+        </div>
+        <div class="client-card" data-client="vanilla">
+            <h3>Vanilla</h3>
+        </div>
+        <div class="client-card" data-client="labymod">
+            <h3>LabyMod</h3>
+        </div>
+        <div class="client-card" data-client="myau">
+            <h3>Myau</h3>
+        </div>
+        <div class="client-card" data-client="adjust">
+            <h3>Adjust</h3>
+        </div>
+        <div class="client-card" data-client="opal">
+            <h3>Opal</h3>
+        </div>
+        <div class="client-card" data-client="raven">
+            <h3>Raven</h3>
+        </div>
     </div>
-    <div id="client-selection" style="display: none;">
-        <select id="client-select">
-            <option value="lunar">Lunar</option>
-            <option value="badlion">Badlion</option>
-            <option value="vanilla">Vanilla</option>
-            <option value="labymod">LabyMod</option>
-            <option value="myau">Myau</option>
-            <option value="adjust">Adjust</option>
-            <option value="opal">Opal</option>
-            <option value="raven">Raven</option>
-        </select>
-        <button id="fetch-stats">Fetch Stats</button>
+    <div id="overlay-content">
+        <div id="api-key-form">
+            <input type="text" id="api-key-input" placeholder="Enter Hypixel API Key">
+            <button id="validate-api-key">Validate API Key</button>
+        </div>
+        <table id="stats-table">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Stars</th>
+                    <th>Final Kills</th>
+                    <th>Kills</th>
+                    <th>FKDR</th>
+                    <th>WLR</th>
+                    <th>Wins</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- İstatistikler buraya eklenecek -->
+            </tbody>
+        </table>
     </div>
-    <table id="stats-table">
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Stars</th>
-                <th>Final Kills</th>
-                <th>Kills</th>
-                <th>FKDR</th>
-                <th>WLR</th>
-                <th>Wins</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- İstatistikler buraya eklenecek -->
-        </tbody>
-    </table>
 
     <script>
         const { ipcRenderer } = require('electron');
 
+        // Client kutucuklarına tıklama olayı ekle
+        document.querySelectorAll('.client-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const selectedClient = card.getAttribute('data-client');
+                console.log('Selected client:', selectedClient); // Seçilen client'ı kontrol et
+
+                // Client seçim ekranını gizle ve overlay içeriğini göster
+                document.getElementById('client-selection').style.display = 'none';
+                document.getElementById('overlay-content').style.display = 'block';
+
+                // API key doğrulama ve istatistikleri çekme işlemlerini başlat
+                const apiKey = document.getElementById('api-key-input').value;
+                if (apiKey) {
+                    ipcRenderer.send('request-player-stats', { apiKey, client: selectedClient });
+                } else {
+                    alert('Please enter a valid API Key.');
+                }
+            });
+        });
+
+        // API key doğrulama butonuna tıklandığında
         document.getElementById('validate-api-key').addEventListener('click', () => {
             const apiKey = document.getElementById('api-key-input').value;
             ipcRenderer.send('validate-api-key', apiKey);
         });
 
+        // API key doğrulama sonucu
         ipcRenderer.on('api-key-validation-result', (event, isValid) => {
             if (isValid) {
-                document.getElementById('api-key-form').style.display = 'none';
-                document.getElementById('client-selection').style.display = 'block';
+                alert('API Key is valid!');
+                const selectedClient = document.querySelector('.client-card[data-selected="true"]').getAttribute('data-client');
+                ipcRenderer.send('request-player-stats', { apiKey: document.getElementById('api-key-input').value, client: selectedClient });
             } else {
                 alert('Invalid API Key');
             }
         });
 
-        document.getElementById('fetch-stats').addEventListener('click', () => {
-            const apiKey = document.getElementById('api-key-input').value;
-            const client = document.getElementById('client-select').value;
-            ipcRenderer.send('request-player-stats', { apiKey, client });
-        });
-
+        // İstatistikler alındığında
         ipcRenderer.on('player-stats-response', (event, stats) => {
             const tableBody = document.querySelector('#stats-table tbody');
-            tableBody.innerHTML = ''; // Clear previous results
+            tableBody.innerHTML = ''; // Önceki sonuçları temizle
             stats.forEach((stat, index) => {
                 const row = document.createElement('tr');
                 const starClass = getStarClass(stat.stars);
@@ -110,6 +190,7 @@
             });
         });
 
+        // Yıldız sayısına göre renk sınıfı belirleme
         function getStarClass(stars) {
             if (stars >= 0 && stars < 100) return 'star-0-100';
             if (stars >= 100 && stars < 200) return 'star-100-200';
@@ -119,6 +200,7 @@
             return '';
         }
 
+        // Final kill sayısına göre renk sınıfı belirleme
         function getFKClass(finalKills) {
             if (finalKills >= 0 && finalKills < 500) return 'fk-0-500';
             if (finalKills >= 500 && finalKills < 1000) return 'fk-500-1000';

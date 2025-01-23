@@ -3,14 +3,18 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main';
 import axios from 'axios';
 import fs from 'fs';
+import os from 'os'; // Kullanıcının home dizinini almak için
 
 let mainWindow;
 
 const HYPIXEL_API_URL = 'https://api.hypixel.net/key';
 const HYPIXEL_PLAYER_STATS_URL = 'https://api.hypixel.net/player';
 
+// Kullanıcının home dizinini al
+const homeDir = os.homedir();
+
 const CLIENT_PATHS = {
-    lunar: 'path/to/lunar/logs/latest.log',
+    lunar: path.join(homeDir, '.lunarclient', 'offline', 'multiver', 'logs', 'latest.log'), // Lunar Client log yolu
     badlion: 'path/to/badlion/logs/latest.log',
     vanilla: 'path/to/vanilla/logs/latest.log',
     labymod: 'path/to/labymod/logs/latest.log',
@@ -79,12 +83,16 @@ app.on('ready', () => {
         height: 600,
         titleBarOverlay: false,
         titleBarStyle: 'hidden',
+        transparent: true, // Arkaplanı şeffaf yap
+        frame: false, // Pencere çerçevesini kaldır
         webPreferences: {
             preload: path.join(import.meta.dirname, 'preload.js'), // Optional
             nodeIntegration: true,
             contextIsolation: true
         },
     });
+
+    mainWindow.loadFile(path.join(import.meta.dirname, '../renderer/index.html'));
 
     ipcMain.on('validate-api-key', async (event, apiKey) => {
         const isValid = await validateApiKey(apiKey);
@@ -97,8 +105,6 @@ app.on('ready', () => {
         const stats = await getAllPlayersStats(apiKey, players);
         event.reply('player-stats-response', stats);
     });
-
-    mainWindow.loadFile(path.join(import.meta.dirname, '../renderer/index.html'));
 });
 
 app.on('window-all-closed', () => {
