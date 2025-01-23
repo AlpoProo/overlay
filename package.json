@@ -1,0 +1,26 @@
+{
+  "name": "overlay",
+  "version": "0.0.0",
+  "description": "Minecraft Overlay",
+  "main": "src/main/index.js",
+  "scripts": {
+    "test": "npx electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlpoProo/overlay.git"
+  },
+  "author": "AlpoProo",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/AlpoProo/overlay/issues"
+  },
+  "type": "module",
+  "homepage": "https://github.com/AlpoProo/overlay#readme",
+  "devDependencies": {
+    "electron": "^34.0.1"
+  },
+  "dependencies": {
+    "custom-electron-titlebar": "^4.2.8"
+  }
+}
