@@ -7,15 +7,44 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.8);
             color: white;
-            font-size: 18px;
+            font-size: 14px;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+        }
+        .window-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-color: rgba(0, 0, 0, 0.9);
+            -webkit-app-region: drag;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .window-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+        }
+        .window-controls button:hover {
+            color: #ccc;
         }
         .client-selection {
             display: grid;
@@ -24,6 +53,7 @@
             gap: 10px;
             width: 80%;
             max-width: 600px;
+            margin-top: 40px;
         }
         .client-card {
             background-color: rgba(0, 0, 0, 0.8);
@@ -50,19 +80,22 @@
         .client-card[data-client="raven"] { background-color: #B8B8FF; }
         #overlay-content {
             display: none;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: transparent;
             padding: 20px;
             border-radius: 10px;
-            width: 80%;
-            max-width: 800px;
+            width: 100%;
+            justify-content: flex-start;
+            max-width: none;
+            margin-top: 30px;
         }
         table {
-            width: 100%;
+            width: calc(100% - 40px); /* Soldan ve sağdan 20px boşluk bırak */
+            margin: 0 20px; /* Soldan ve sağdan 20px boşluk */
             border-collapse: collapse;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: transparent;
         }
         th, td {
-            padding: 10px;
+            padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
@@ -76,6 +109,13 @@
     </style>
 </head>
 <body>
+    <div class="window-frame">
+        <div class="window-controls">
+            <button id="minimize-btn">─</button>
+            <button id="maximize-btn">□</button>
+            <button id="close-btn">✕</button>
+        </div>
+    </div>
     <div id="client-selection" class="client-selection">
         <div class="client-card" data-client="lunar">
             <h3>Lunar</h3>
@@ -128,20 +168,12 @@
         // Client kartlarına tıklama olayı ekle
         document.querySelectorAll('.client-card').forEach(card => {
             card.addEventListener('click', () => {
-                // Tüm client kartlarındaki seçim işaretini kaldır
                 document.querySelectorAll('.client-card').forEach(c => c.removeAttribute('data-selected'));
-
-                // Tıklanan client kartını seçili olarak işaretle
                 card.setAttribute('data-selected', 'true');
-
                 const selectedClient = card.getAttribute('data-client');
                 console.log('Client seçildi:', selectedClient);
-
-                // Client seçim ekranını gizle ve overlay içeriğini göster
                 document.getElementById('client-selection').style.display = 'none';
                 document.getElementById('overlay-content').style.display = 'block';
-
-                // API key doğrulama ve istatistikleri çekme işlemlerini başlat
                 const apiKey = document.getElementById('api-key-input').value;
                 if (apiKey) {
                     console.log('API anahtarı ile istatistikler isteniyor.');
@@ -154,13 +186,11 @@
         document.getElementById('validate-api-key').addEventListener('click', () => {
             const apiKeyInput = document.getElementById('api-key-input');
             const apiKey = apiKeyInput.value.trim();
-
             if (!apiKey) {
                 console.log('API anahtarı girilmedi.');
                 alert('Please enter an API key.');
                 return;
             }
-
             console.log('API anahtarı doğrulanıyor.');
             Electron.sendMessage('validate-api-key', apiKey);
         });
@@ -168,12 +198,9 @@
         // API key doğrulama sonucunu dinle
         Electron.receiveMessage('api-key-validation', (valid) => {
             const apiKeyInput = document.getElementById('api-key-input');
-
             if (valid) {
                 console.log('API anahtarı geçerli.');
                 alert('The API key is valid!');
-
-                // API anahtarı doğrulandıktan sonra, seçilen client ile istatistikleri iste
                 const selectedClient = document.querySelector('.client-card[data-selected="true"]').getAttribute('data-client');
                 console.log('Seçilen client:', selectedClient);
                 Electron.sendMessage('request-player-stats', { apiKey: apiKeyInput.value, client: selectedClient });
@@ -181,15 +208,18 @@
                 console.log('API anahtarı geçersiz.');
                 alert('This is not a valid API key. Please try again.');
             }
-
             apiKeyInput.value = '';
         });
 
         // İstatistikler alındığında
         Electron.receiveMessage('player-stats-response', (stats) => {
-            console.log(stats)
+            console.log(stats);
             const tableBody = document.querySelector('#stats-table tbody');
             tableBody.innerHTML = '';
+
+            // Yıldıza göre sırala (artan -> azalan)
+            stats.sort((a, b) => b.stars - a.stars);
+
             stats.forEach((stat, index) => {
                 const row = document.createElement('tr');
                 const starClass = getStarClass(stat.stars);
@@ -223,6 +253,19 @@
             if (finalKills >= 500 && finalKills < 1000) return 'fk-500-1000';
             return '';
         }
+
+        // Pencere kontrol butonları
+        document.getElementById('minimize-btn').addEventListener('click', () => {
+            Electron.sendMessage('minimize-window');
+        });
+
+        document.getElementById('maximize-btn').addEventListener('click', () => {
+            Electron.sendMessage('maximize-window');
+        });
+
+        document.getElementById('close-btn').addEventListener('click', () => {
+            Electron.sendMessage('close-window');
+        });
     </script>
 </body>
 </html>
