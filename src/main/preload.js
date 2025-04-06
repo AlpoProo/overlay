@@ -1,18 +1,41 @@
-const { app, contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 
-// electron main process ve renderer arasındaki köprüdür.
-// tarayıcı javascript ortamına server'dan nelerin yükleneceğini belirtir
+// Bridge between electron main process and renderer
+// Specifies what to load from the server into the browser javascript environment
 
+// Valid channel names
+const validChannels = [
+    'validate-api-key',
+    'api-key-validation',
+    'request-player-stats',
+    'player-stats-response',
+    'minimize-window',
+    'maximize-window',
+    'close-window',
+    'change-game-type',
+    'toggle-always-on-top',
+    'toggle-auto-detect-game',
+    'toggle-collapsed-mode'
+];
 
 contextBridge.exposeInMainWorld('Electron', {
-    titlebar: () => {
-        return new Titlebar({backgroundColor: TitlebarColor.fromHex('#6A4C30')})
-    },
+    // Send message from renderer to main process
     sendMessage: (channel, data) => {
-        ipcRenderer.send(channel, data);
+        if (validChannels.includes(channel)) {
+            ipcRenderer.send(channel, data);
+        }
     },
-    receiveMessage: (channel, func) => {
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
-    }
     
+    // Receive message from main process
+    receiveMessage: (channel, func) => {
+        if (validChannels.includes(channel)) {
+            ipcRenderer.on(channel, (event, ...args) => func(...args));
+        }
+    },
+    
+    // App version
+    appVersion: '1.0.0',
+    
+    // Operating system info
+    platform: process.platform
 })

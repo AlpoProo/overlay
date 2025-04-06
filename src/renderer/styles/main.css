@@ -1,0 +1,552 @@
+:root {
+    --primary-color: #4e73df;
+    --primary-color-hover: #375abe;
+    --secondary-color: #8e44ad;
+    --background-color: #000000;
+    --header-height: 40px;
+    --navbar-height: 33px;
+    --background-opacity: 0.8;
+    --transition-speed: 0.3s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: white;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+    transition: all var(--transition-speed);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-hover);
+}
+
+/* Tablo stilleri */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: rgba(60, 60, 60, 0.9) !important;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+thead {
+    background-color: rgba(70, 70, 70, 0.9) !important;
+}
+
+th {
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.7px;
+    color: white !important;
+    opacity: 1 !important;
+}
+
+tbody tr:hover {
+    background-color: rgba(78, 115, 223, 0.1);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Star renklendirmesi */
+.star-0-100 { color: #AAAAAA !important; }
+.star-100-200 { color: #FFFFFF !important; }
+.star-200-300 { color: #FFAA00 !important; }
+.star-300-400 { color: #55FFFF !important; }
+.star-400-500 { color: #00AA00 !important; }
+.star-500-plus { color: #AA0000 !important; }
+
+/* Final kill renklendirmesi */
+.fk-0-500 { color: #AAAAAA !important; }
+.fk-500-1000 { color: #FFFF55 !important; }
+.fk-1000-plus { color: #55FFFF !important; }
+
+/* Window frame */
+.window-frame {
+    height: var(--header-height);
+    background-color: rgba(70, 70, 70, 0.311) !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    -webkit-app-region: drag;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 1 !important;
+}
+
+.window-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Yazılar metninin şeffaf olmaması için */
+.settings-label, .nav-text, .window-title, td, th, h2, h3, h4, h5, p, span, label, .settings-title, button, a, input, select, option, .window-controls > * {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7) !important;
+    opacity: 1 !important;
+    mix-blend-mode: normal !important;
+    filter: none !important;
+}
+
+/* Text input ve seçim kutuları için */
+input, select, option, button {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* Arka plan şeffaflığı için, içeriklerin şeffaf olmaması */
+.settings-group, .client-card, table, th, .navbar, .window-frame {
+    backdrop-filter: blur(5px);
+}
+
+/* Table renkleri */
+td {
+    background-color: rgba(60, 60, 60, 0.9) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Table başlık renkleri */
+th {
+    background-color: rgba(70, 70, 70, 0.9) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: bold !important;
+}
+
+/* İçerik alanlarındaki şeffaflığı sınırla */
+.settings-group, table {
+    background-color: rgba(60, 60, 60, 0.9) !important;
+}
+
+body.collapsed {
+    background-color: transparent !important;
+}
+
+/* Daraltma modunda başlık çubuğu tıklanabilir kalacak */
+body.collapsed .window-frame {
+    background-color: rgba(40, 40, 40, 0.9) !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 9999 !important;
+}
+
+body.collapsed .window-controls,
+body.collapsed .window-title {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 10000 !important;
+}
+
+/* Daraltma modunda düğmeler belirgin ve tıklanabilir olacak */
+body.collapsed #minimize-btn,
+body.collapsed #maximize-btn,
+body.collapsed #close-btn,
+body.collapsed #collapse-btn {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 10001 !important;
+    position: relative !important;
+}
+
+/* Daraltma modundayken içerik alanlarının tıklamaları geçirecek şekilde ayarla */
+body.collapsed .app-container,
+body.collapsed #stats-screen,
+body.collapsed #client-screen,
+body.collapsed #settings-screen,
+body.collapsed .navbar,
+body.collapsed table {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Şeffaf arka plan için */
+body.collapsed {
+    background-color: transparent !important;
+}
+
+/* Hover stilleri pencere düğmeleri için */
+#close-btn:hover {
+    background-color: rgba(231, 76, 60, 0.8) !important;
+}
+
+#minimize-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#maximize-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#collapse-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.app-container {
+    width: 100%;
+    height: 100%;
+    padding-top: var(--header-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: all var(--transition-speed);
+}
+
+body.collapsed .app-container {
+    padding-top: var(--header-height);
+    height: var(--header-height);
+    overflow: hidden;
+}
+
+/* Navbar ve ana içerik */
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--navbar-height);
+    background-color: rgba(70, 70, 70, 0.9) !important;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 5;
+    transition: transform var(--transition-speed), background-color var(--transition-speed);
+    opacity: 1 !important;
+}
+
+body.collapsed .navbar {
+    display: none;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 70px;
+    height: 100%;
+    transition: all var(--transition-speed);
+    color: rgba(255, 255, 255, 0.7);
+    position: relative;
+    gap: 5px;
+}
+
+.nav-item:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+    border-top: 2px solid var(--primary-color);
+}
+
+.nav-icon {
+    font-size: 12px;
+    margin-bottom: 0;
+}
+
+.nav-text {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Ekranlar */
+.screen {
+    display: none;
+    width: 100%;
+    height: calc(100vh - var(--navbar-height) - var(--header-height));
+    padding: 20px;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.screen.active {
+    display: block;
+}
+
+body.collapsed .screen {
+    display: none;
+}
+
+/* İstemci Seçim Ekranı */
+.client-selection {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 15px;
+    width: 90%;
+    max-width: 700px;
+    margin: 20px auto;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.client-card {
+    background-color: rgba(40, 40, 40, 0.9);
+    padding: 20px 15px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 90px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.client-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+    z-index: 1;
+}
+
+.client-card h3 {
+    position: relative;
+    z-index: 2;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.client-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.405);
+}
+
+.client-card[data-selected="true"] {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.client-card[data-client="lunar"] { background-color: #7f39fb; background-image: linear-gradient(135deg, #7f39fb, #6622cc); }
+.client-card[data-client="badlion"] { background-color: #4ECDC4; background-image: linear-gradient(135deg, #4ECDC4, #1a9e95); }
+.client-card[data-client="vanilla"] { background-color: #e67e22; background-image: linear-gradient(135deg, #e67e22, #d35400); }
+.client-card[data-client="labymod"] { background-color: #6B5B95; background-image: linear-gradient(135deg, #6B5B95, #4a3d72); }
+.client-card[data-client="myau"] { background-color: #88D8B0; background-image: linear-gradient(135deg, #88D8B0, #58b882); }
+.client-card[data-client="adjust"] { background-color: #FF9F1C; background-image: linear-gradient(135deg, #FF9F1C, #e08300); }
+.client-card[data-client="opal"] { background-color: #A8DADC; background-image: linear-gradient(135deg, #A8DADC, #7eb9bc); }
+.client-card[data-client="raven"] { background-color: #9b59b6; background-image: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+/* İstatistikler Ekranı */
+#api-key-form {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+}
+
+#api-key-input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: border-color var(--transition-speed);
+}
+
+#api-key-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.3);
+}
+
+#validate-api-key {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color var(--transition-speed);
+}
+
+#validate-api-key:hover {
+    background-color: var(--secondary-color);
+}
+
+.window-controls {
+    display: flex;
+    gap: 15px;
+    opacity: 1 !important;
+    transition: opacity var(--transition-speed);
+}
+
+body.collapsed .window-controls {
+    opacity: 1 !important;
+}
+
+.window-controls button {
+    background: none;
+    border: none;
+    color: white !important;
+    font-size: 14px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color var(--transition-speed);
+}
+
+.window-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Ayarlar Ekranı */
+.settings-group {
+    background-color: rgba(60, 60, 60, var(--background-opacity));
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.settings-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.settings-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.settings-value {
+    display: flex;
+    align-items: center;
+}
+
+/* Yükleniyor */
+.loading {
+    display: none;
+    margin: 20px auto;
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* Yazılar metninin şeffaf olmaması için daha güçlü bir seçici */
+body .settings-label, 
+body .nav-text, 
+body .window-title, 
+body td, 
+body th, 
+body h2, body h3, body h4, body h5, 
+body p, body span, body label, 
+body .settings-title, 
+body button, body a, body input, body select, body option, 
+body .window-controls > * {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7) !important;
+    opacity: 1 !important;
+    mix-blend-mode: normal !important;
+    filter: none !important;
+} 
