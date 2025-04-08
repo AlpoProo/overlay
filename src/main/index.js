@@ -67,8 +67,15 @@ app.on('ready', createWindow);
 // API key validation
 ipcMain.on('validate-api-key', async (event, apiKey) => {
     consoled.blue('Validating API key:', apiKey.slice(0, 4) + '****');
-    const isValid = await api.validateApiKey(apiKey);
-    mainWindow.webContents.send('api-key-validation', isValid);
+    
+    try {
+        const isValid = await api.validateApiKey(apiKey);
+        consoled.cyan(`API Key validation result: ${isValid ? 'Valid' : 'Invalid'}`);
+        mainWindow.webContents.send('api-key-validation', isValid);
+    } catch (error) {
+        consoled.red('Error during API key validation:', error.message);
+        mainWindow.webContents.send('api-key-validation', false);
+    }
 });
 
 // Get player statistics
@@ -153,8 +160,9 @@ function readAndProcessLog(client, logPath, apiKey) {
     core.readLastLogLine(client, async (lastLogLine) => {
         if (!lastLogLine) {
             consoled.yellow(`Could not read log content for ${client}`);
-            // Burada boş liste göndermek yerine mevcut istatistikleri koruyor, sadece bilgi mesajı
-            consoled.cyan(`Lütfen oyuncuları görmek için Minecraft sohbetine '/who' yazın`);
+            // Bilgilendirme mesajı gönder
+            consoled.cyan(`Please type '/who' in Minecraft chat to see players`);
+            mainWindow.webContents.send('no-who-command');
             return;
         }
         
@@ -167,6 +175,7 @@ function readAndProcessLog(client, logPath, apiKey) {
         
         if (!containsWhoCommand) {
             consoled.yellow(`Geçerli bir /who komutu bulunamadı: ${lastLogLine}`);
+            mainWindow.webContents.send('no-who-command');
             return;
         }
         
@@ -235,7 +244,9 @@ function readAndProcessLog(client, logPath, apiKey) {
         } else {
             consoled.yellow('Log satırı geçerli bir /who komutu içeriyor ancak oyuncu ayrıştırılamadı');
             consoled.cyan(`Log satırı: ${lastLogLine}`);
-            // Oyuncu listesi bulunamadığında boş liste göndermek yerine, mevcut statları koruyoruz
+            // Oyuncu listesi bulunamadığında bilgilendirme mesajı gönder
+            consoled.bright.cyan(`Please type '/who' in your Minecraft chat to see players in your game`);
+            mainWindow.webContents.send('no-who-command');
         }
     });
 }
@@ -313,22 +324,32 @@ app.on('activate', () => {
 // Daraltma modunda fare tıklamalarını sadece gizli kısımlar için geçirmek
 ipcMain.on('toggle-collapsed-mode', (_, ignore) => {
     try {
-        // Pencere kontrollerinin çalışması için fare olaylarını TAMAMEN devre dışı bırakmıyoruz!
-        // Sadece setIgnoreMouseEvents kullanmak yerine click-through kısmını kapatıyoruz
-        // Bu şekilde başlık çubuğunun tamamı tıklanabilir olacak
+        // Pencere boyutunu sadece başlık çubuğu gösterecek şekilde ayarla
+        const titleBarHeight = 30;
+        mainWindow.setSize(300, titleBarHeight);
         
-        // Tamamen şeffaflaştır ama fare olaylarını geçirme
-        mainWindow.setOpacity(0.8); // Opaklığı koru
+        // Şeffaflığı koruyalım
+        mainWindow.setOpacity(0.8);
         
-        // Önemli: Fare olaylarını tamamen devre dışı bırakmıyoruz, click-through özelliğini kullanmıyoruz
-        // Bu şekilde başlık çubuğu ve pencere kontrolleri normal şekilde çalışacak
+        // Click-through özelliğini etkinleştir ama başlık çubuğu bölgesini hariç tut
+        // Bu sayede başlık çubuğuna tıklandığında butonlar çalışacak,
+        // ama pencerenin diğer bölgelerine tıklandığında arkadaki uygulamaya geçecek
+        mainWindow.setIgnoreMouseEvents(true, { 
+            forward: true, 
+            // NOT: Bu bölge tıklamaları geçirmeyecek (tıklanabilir bölge)
+            // Yani başlık çubuğu bölgesi normal şekilde tıklanabilir olacak
+            regionWithinWindow: { 
+                x: 0, 
+                y: 0, 
+                width: 300, 
+                height: titleBarHeight 
+            } 
+        });
         
-        // Tıklanabilir bölgeler oluşturmaya gerek yok, çünkü tüm pencere tıklanabilir olacak
-        // İçerik görünmez olsa bile, tıklanabilir olacak
-        consoled.bright.green('Daraltılmış mod etkinleştirildi: Tüm pencere tıklanabilir, içerik görünmez');
-        
-        // Önemli: Renderer'a bir mesaj gönderelim ki orada da uygun CSS stillerini uygulayabilsin
+        // Renderer'a daraltma modunu aktifleştirdiğimizi bildiriyoruz
         mainWindow.webContents.send('collapsed-mode-activated');
+        
+        consoled.bright.green('Daraltılmış mod etkinleştirildi: Başlık çubuğu tıklanabilir, diğer alanlar tıklamaları geçiriyor');
     } catch (error) {
         consoled.bright.red('toggle-collapsed-mode hata:', error);
     }
@@ -337,13 +358,19 @@ ipcMain.on('toggle-collapsed-mode', (_, ignore) => {
 // Normal moda dönüş için
 ipcMain.on('restore-window-mode', () => {
     try {
-        // Normal moda dönüldüğünde fare olaylarını normal işleme
-        // Opaklığı eski haline getir
+        // Pencereyi normal boyutuna getir
+        mainWindow.setSize(650, 350);
+        
+        // Normal opaklığa dön
         mainWindow.setOpacity(0.8);
-        consoled.bright.green('Normal pencere moduna dönüldü: Fare olayları normal işleniyor');
+        
+        // Click-through özelliğini kapat - fare olayları normal işlenecek
+        mainWindow.setIgnoreMouseEvents(false);
         
         // Renderer'a normal moda dönüldüğünü bildir
         mainWindow.webContents.send('normal-mode-activated');
+        
+        consoled.bright.green('Normal pencere moduna dönüldü: Click-through özelliği kapatıldı');
     } catch (error) {
         consoled.bright.red('restore-window-mode hata:', error);
     }

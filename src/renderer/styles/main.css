@@ -1,14 +1,95 @@
 :root {
+    /* Light Theme */
+    --light-bg-color: rgba(240, 240, 240, 0.95);
+    --light-text-color: #333;
+    --light-accent-color: #4caf50;
+    --light-secondary-color: #2196f3;
+    --light-border-color: rgba(0, 0, 0, 0.2);
+    --light-hover-color: rgba(0, 0, 0, 0.1);
+    
+    /* Dark Theme (Default) */
+    --dark-bg-color: rgba(30, 30, 30, 0.95);
+    --dark-text-color: #f1f1f1;
+    --dark-accent-color: #4caf50;
+    --dark-secondary-color: #03a9f4;
+    --dark-border-color: rgba(255, 255, 255, 0.1);
+    --dark-hover-color: rgba(255, 255, 255, 0.05);
+    
+    /* Current theme (default to dark) */
+    --bg-color: var(--dark-bg-color);
+    --text-color: var(--dark-text-color);
+    --accent-color: var(--dark-accent-color);
+    --secondary-color: var(--dark-secondary-color);
+    --border-color: var(--dark-border-color);
+    --hover-color: var(--dark-hover-color);
     --primary-color: #4e73df;
     --primary-color-hover: #375abe;
-    --secondary-color: #8e44ad;
     --background-color: #000000;
     --header-height: 40px;
-    --navbar-height: 33px;
+    --navbar-height: 50px;
     --background-opacity: 0.8;
     --transition-speed: 0.3s;
 }
 
+/* Light theme class */
+body.light-theme {
+    --bg-color: var(--light-bg-color);
+    --text-color: var(--light-text-color);
+    --accent-color: var(--light-accent-color);
+    --secondary-color: var(--light-secondary-color);
+    --border-color: var(--light-border-color);
+    --hover-color: var(--light-hover-color);
+}
+
+/* Light theme overrides */
+body.light-theme .window-frame {
+    background-color: rgba(230, 230, 230, 0.95);
+    border-bottom: 1px solid var(--light-border-color);
+}
+
+body.light-theme .navbar {
+    background-color: rgba(230, 230, 230, 0.95);
+    border-top: 1px solid var(--light-border-color);
+}
+
+body.light-theme .window-controls button {
+    color: #333;
+}
+
+body.light-theme #close-btn:hover {
+    background-color: #e81123;
+    color: white;
+}
+
+body.light-theme .settings-group {
+    background-color: rgba(250, 250, 250, 0.9);
+}
+
+body.light-theme #stats-table th {
+    background-color: rgba(220, 220, 220, 0.7);
+}
+
+body.light-theme .player-details-header {
+    background-color: rgba(220, 220, 220, 0.7);
+}
+
+body.light-theme .stat-item:nth-child(even) {
+    background-color: rgba(240, 240, 240, 0.7);
+}
+
+/* Player stats coloring - light theme overrides */
+body.light-theme .star-0-100 { color: #555555; }
+body.light-theme .star-100-200 { color: #222222; }
+body.light-theme .star-200-300 { color: #CC7700; }
+body.light-theme .star-300-400 { color: #009999; }
+body.light-theme .star-400-500 { color: #008800; }
+body.light-theme .star-500-plus { color: #880000; text-shadow: 0 0 2px rgba(255, 0, 0, 0.3); }
+
+body.light-theme .fk-0-500 { color: #AAAAAA !important; }
+body.light-theme .fk-500-1000 { color: #FFFF55 !important; }
+body.light-theme .fk-1000-plus { color: #55FFFF !important; text-shadow: 0 0 3px rgba(0, 255, 255, 0.5) !important; }
+
+/* Completely reset all global margins and paddings */
 * {
     margin: 0;
     padding: 0;
@@ -17,15 +98,17 @@
 }
 
 body {
-    background-color: var(--background-color);
-    color: white;
-    width: 100%;
-    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgba(34, 34, 34, 0.9);
+    color: var(--text-color);
     overflow: hidden;
-    user-select: none;
-    -webkit-user-select: none;
-    position: relative;
-    transition: all var(--transition-speed);
+    border-radius: 12px !important;
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    gap: 0;
 }
 
 /* Scrollbar */
@@ -50,9 +133,9 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 8px;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     background-color: rgba(60, 60, 60, 0.9) !important;
 }
 
@@ -83,42 +166,38 @@ tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* Star renklendirmesi */
+/* Player stats coloring */
 .star-0-100 { color: #AAAAAA !important; }
 .star-100-200 { color: #FFFFFF !important; }
 .star-200-300 { color: #FFAA00 !important; }
 .star-300-400 { color: #55FFFF !important; }
 .star-400-500 { color: #00AA00 !important; }
-.star-500-plus { color: #AA0000 !important; }
+.star-500-plus { color: #AA0000 !important; text-shadow: 0 0 3px rgba(255, 0, 0, 0.5) !important; }
 
-/* Final kill renklendirmesi */
 .fk-0-500 { color: #AAAAAA !important; }
 .fk-500-1000 { color: #FFFF55 !important; }
-.fk-1000-plus { color: #55FFFF !important; }
+.fk-1000-plus { color: #55FFFF !important; text-shadow: 0 0 3px rgba(0, 255, 255, 0.5) !important; }
 
-/* Window frame */
+/* Window frame without margins */
 .window-frame {
-    height: var(--header-height);
-    background-color: rgba(70, 70, 70, 0.311) !important;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
+    align-items: center;
+    background-color: rgba(34, 34, 34, 0.9);
+    height: var(--header-height);
+    border-bottom: none;
     -webkit-app-region: drag;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    opacity: 1 !important;
+    padding: 0 10px;
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    margin: 0;
+    padding-bottom: 0;
 }
 
 .window-title {
-    font-size: 13px;
-    font-weight: 500;
-    color: white !important;
-    opacity: 1 !important;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
 }
 
 /* Animasyonlar */
@@ -139,7 +218,8 @@ tbody tr:last-child td {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Yazılar metninin şeffaf olmaması için */
@@ -181,58 +261,786 @@ th {
 }
 
 body.collapsed {
-    background-color: transparent !important;
-}
-
-/* Daraltma modunda başlık çubuğu tıklanabilir kalacak */
-body.collapsed .window-frame {
-    background-color: rgba(40, 40, 40, 0.9) !important;
-    pointer-events: auto !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 300px !important;
+    height: 30px !important;
+    max-height: 30px !important;
+    min-height: 30px !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    overflow: hidden !important;
     opacity: 1 !important;
-    visibility: visible !important;
     z-index: 9999 !important;
+    pointer-events: auto !important; /* Tüm body'nin fare olaylarını yakalamasını sağlar */
 }
 
-body.collapsed .window-controls,
+/* Sadece başlık çubuğu görünür ve tıklanabilir olsun */
+body.collapsed .window-frame {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 300px !important;
+    height: 30px !important;
+    pointer-events: auto !important; /* Fare olaylarını yakala */
+    background-color: rgba(34, 34, 34, 0.9) !important;
+    border-radius: 5px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    z-index: 10000 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+    cursor: default !important;
+}
+
 body.collapsed .window-title {
     pointer-events: auto !important;
-    opacity: 1 !important;
+    display: block !important;
     visibility: visible !important;
-    z-index: 10000 !important;
+    opacity: 1 !important;
+    z-index: 10001 !important;
+    padding-left: 10px !important;
+    cursor: move !important; /* Sürüklenebilir görünüm */
+    -webkit-app-region: drag !important; /* Electron sürükleme bölgesi */
+    font-weight: bold !important;
 }
 
-/* Daraltma modunda düğmeler belirgin ve tıklanabilir olacak */
+body.collapsed .window-controls {
+    pointer-events: auto !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 10001 !important;
+    -webkit-app-region: no-drag !important; /* Butonlar sürüklenmesin */
+}
+
 body.collapsed #minimize-btn,
 body.collapsed #maximize-btn,
 body.collapsed #close-btn,
 body.collapsed #collapse-btn {
     pointer-events: auto !important;
-    opacity: 1 !important;
     visibility: visible !important;
-    z-index: 10001 !important;
-    position: relative !important;
+    display: flex !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10002 !important;
+    cursor: pointer !important;
+    -webkit-app-region: no-drag !important; /* Butonlar sürüklenmesin */
 }
 
-/* Daraltma modundayken içerik alanlarının tıklamaları geçirecek şekilde ayarla */
+/* ANA CONTAINER TAMAMEN GİZLENSİN */
 body.collapsed .app-container,
 body.collapsed #stats-screen,
-body.collapsed #client-screen,
+body.collapsed #client-screen, 
 body.collapsed #settings-screen,
 body.collapsed .navbar,
-body.collapsed table {
-    opacity: 0 !important;
-    visibility: hidden !important;
+body.collapsed table,
+body.collapsed .screen {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
     pointer-events: none !important;
+    position: absolute !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    overflow: hidden !important;
 }
 
-/* Şeffaf arka plan için */
-body.collapsed {
+/* Stats ekranı ve tablosu */
+#stats-screen {
+    margin: 0;
+    padding: 10px 15px !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 40px !important; /* Navbarı dikkate al */
+    overflow: auto;
+}
+
+#stats-table {
+    width: 100%;
+    margin: 0 0 50px 0 !important; /* Tablonun altında navbar boşluğu bırak */
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: none;
+    background-color: rgba(50, 50, 50, 0.7) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+}
+
+/* Table header styling */
+#stats-table thead tr {
+    background-color: rgba(60, 60, 60, 0.95);
+    margin: 0;
+    padding: 0;
+}
+
+#stats-table th {
+    padding: 0 10px;
+    margin: 0;
+    height: 30px;
+    line-height: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(60, 60, 60, 0.95);
+    border: none;
+}
+
+/* Remove any gaps in the layout */
+.window-frame {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
+}
+
+/* Removing any possible column margins/paddings */
+#stats-table th:first-child,
+#stats-table td:first-child {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Force actual table to sit directly against the window frame */
+.screen.active {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#stats-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(50, 50, 50, 0.4) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+#stats-table tr:nth-child(even) td {
+    background-color: rgba(60, 60, 60, 0.4) !important;
+}
+
+#stats-table tr:last-child td {
+    border-bottom: none;
+}
+
+#stats-table tbody tr:hover td {
+    background-color: rgba(70, 70, 70, 0.7) !important;
+}
+
+/* FKDR and Star colors - updated for visibility */
+.fk-0-500 { color: #AAAAAA !important; }
+.fk-500-1000 { color: #FFFF55 !important; }
+.fk-1000-plus { color: #55FFFF !important; text-shadow: 0 0 3px rgba(0, 255, 255, 0.5) !important; }
+
+/* Ensure contrast for other text */
+#stats-table td:first-child {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 500;
+}
+
+/* Form Elements */
+input[type="text"],
+input[type="number"],
+select {
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-width: 200px;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: var(--dark-accent-color);
+    opacity: 0.9;
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* Hover Effects */
+.settings-item:hover {
+    background-color: var(--hover-color);
+    border-radius: 4px;
+}
+
+/* Tooltips */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]:after {
+    content: attr(data-tooltip);
+    position: absolute;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+[data-tooltip]:hover:after {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Player Details Panel */
+.player-details-panel {
+    position: fixed;
+    top: calc(var(--header-height) + 20px);
+    right: 20px;
+    width: 300px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    display: none;
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+.player-details-panel.active {
+    display: block;
+}
+
+.player-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--hover-color);
+}
+
+.player-details-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.player-details-header button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 18px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.player-details-header button:hover {
+    background-color: var(--hover-color);
+}
+
+.player-details-content {
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.player-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.stat-item {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.stat-item:nth-child(even) {
+    background-color: var(--hover-color);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Form elements - light theme */
+body.light-theme input[type="text"],
+body.light-theme input[type="number"],
+body.light-theme select {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--light-border-color);
+    color: #333;
+}
+
+body.light-theme button {
+    background-color: var(--light-accent-color);
+}
+
+body.light-theme button:hover {
+    background-color: #3d9140;
+}
+
+/* Navbar - light theme adjustments */
+body.light-theme .nav-item {
+    color: #555;
+}
+
+body.light-theme .nav-item:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .nav-item.active {
+    color: var(--light-accent-color);
+}
+
+/* Tooltips - light theme */
+body.light-theme [data-tooltip]:after {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--light-border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Stats table - light theme */
+body.light-theme #stats-table {
+    border-collapse: collapse;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme #stats-table th {
+    font-weight: 600;
+    color: #333;
+}
+
+body.light-theme #stats-table td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme #stats-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Client cards - light theme */
+body.light-theme .client-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--light-border-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .client-card:hover {
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .client-card.selected {
+    border-color: var(--light-accent-color);
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+/* Fix for loading indicator in light theme */
+body.light-theme .loading {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid var(--light-accent-color);
+}
+
+/* Info Message */
+.info-message {
+    text-align: center;
+    padding: 30px 15px !important;
+    font-size: 15px !important;
+    color: var(--text-color) !important;
     background-color: transparent !important;
+    border: 2px dashed var(--border-color) !important;
+    border-radius: 8px;
 }
 
-/* Hover stilleri pencere düğmeleri için */
+.info-message b {
+    color: var(--accent-color) !important;
+    font-weight: 600;
+}
+
+body.light-theme .info-message {
+    border-color: var(--light-border-color) !important;
+}
+
+body.light-theme .info-message b {
+    color: var(--light-accent-color) !important;
+}
+
+/* Stats Screen - Remove extra spacing */
+#stats-screen {
+    padding: 0;
+}
+
+#stats-screen table {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#stats-screen thead th {
+    padding-top: 12px;
+}
+
+#stats-screen #loading {
+    top: calc(50% + 10px);
+}
+
+/* Ensure no gaps between components */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    gap: 0;
+}
+
+.app-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    margin-top: 0;
+    padding-top: 0;
+    background-color: transparent;
+}
+
+/* Adjust the screen position to be right under the header */
+.screen {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    position: absolute;
+    top: var(--header-height);
+    bottom: 40px; /* Navbar height */
+    left: 0;
+    right: 0;
+    background-color: transparent;
+    z-index: 5;
+}
+
+.screen.active {
+    display: block !important;
+    z-index: 10;
+}
+
+/* Table styling - remove extra padding */
+#stats-table th,
+#stats-table td {
+    padding: 8px 10px;
+}
+
+/* Table header should connect with window header */
+#stats-table th:first-child {
+    border-top-left-radius: 0;
+}
+
+#stats-table th:last-child {
+    border-top-right-radius: 0;
+}
+
+/* Column widths for consistent table layout */
+#stats-table th:nth-child(1),
+#stats-table td:nth-child(1) {
+    width: 30%;
+    text-align: left;
+    padding-left: 15px;
+}
+
+#stats-table th:nth-child(2),
+#stats-table td:nth-child(2),
+#stats-table th:nth-child(3),
+#stats-table td:nth-child(3),
+#stats-table th:nth-child(4),
+#stats-table td:nth-child(4),
+#stats-table th:nth-child(5),
+#stats-table td:nth-child(5),
+#stats-table th:nth-child(6),
+#stats-table td:nth-child(6) {
+    width: 14%;
+    text-align: center;
+}
+
+/* Text overflow handling */
+#stats-table td, 
+#stats-table th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Stats Table styling - round corners */
+#stats-table {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: none;
+    background-color: rgba(50, 50, 50, 0.7) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+}
+
+/* Table header with rounded top corners */
+#stats-table thead tr:first-child th:first-child {
+    border-top-left-radius: 10px !important;
+}
+
+#stats-table thead tr:first-child th:last-child {
+    border-top-right-radius: 10px !important;
+}
+
+/* Table last row with rounded bottom corners */
+#stats-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px !important;
+}
+
+#stats-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px !important;
+}
+
+/* Fix FKDR color issue - ensure it works */
+#stats-table td:nth-child(6) {
+    color: inherit !important;
+}
+
+#stats-table td:nth-child(6).fk-0-500 {
+    color: #AAAAAA !important;
+}
+
+#stats-table td:nth-child(6).fk-500-1000 {
+    color: #FFFF55 !important;
+}
+
+#stats-table td:nth-child(6).fk-1000-plus {
+    color: #55FFFF !important;
+    text-shadow: 0 0 3px rgba(0, 255, 255, 0.5) !important;
+}
+
+/* Final K column colors */
+#stats-table td:nth-child(5).fk-0-500 {
+    color: #AAAAAA !important;
+}
+
+#stats-table td:nth-child(5).fk-500-1000 {
+    color: #FFFF55 !important;
+}
+
+#stats-table td:nth-child(5).fk-1000-plus {
+    color: #55FFFF !important;
+    text-shadow: 0 0 3px rgba(0, 255, 255, 0.5) !important;
+}
+
+/* Fix Stars column colors */
+#stats-table td:nth-child(2).star-0-100 {
+    color: #AAAAAA !important;
+}
+
+#stats-table td:nth-child(2).star-100-200 {
+    color: #FFFFFF !important;
+}
+
+#stats-table td:nth-child(2).star-200-300 {
+    color: #FFAA00 !important;
+}
+
+#stats-table td:nth-child(2).star-300-400 {
+    color: #55FFFF !important;
+}
+
+#stats-table td:nth-child(2).star-400-500 {
+    color: #00AA00 !important;
+}
+
+#stats-table td:nth-child(2).star-500-plus {
+    color: #AA0000 !important;
+    text-shadow: 0 0 3px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Update screen to accommodate the new navbar position */
+.screen {
+    bottom: 40px;
+}
+
+/* API hata mesajları için geliştirilmiş stiller */
+.api-error-message {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #ff6b6b !important;
+    border: 1px solid #ff6b6b;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 15px auto;
+    max-width: 90%;
+    text-align: center;
+    font-size: 14px;
+    display: block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.api-error-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff6b6b !important;
+    font-size: 16px;
+}
+
+.api-error-code {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ff6b6b !important;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.api-error-details {
+    color: #ff9999 !important;
+    font-family: monospace;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    overflow-wrap: break-word;
+    max-height: 150px;
+    overflow-y: auto;
+    text-align: left;
+    line-height: 1.4;
+}
+
+.api-error-hint {
+    margin-top: 12px;
+    color: #ffc8c8 !important;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* Navbar ve navigation düğmeleri */
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    background-color: rgba(35, 35, 35, 0.9);
+    border-top: none;
+    height: 40px;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: rgba(255, 255, 255, 0.7);
+    z-index: 101;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    color: #55FFFF;
+}
+
+.nav-icon {
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+
+.nav-text {
+    font-size: 12px;
+}
+
+/* Pencere kontrol düğmelerini eski haline getir */
+.window-controls {
+    display: flex;
+    -webkit-app-region: no-drag;
+}
+
+.window-controls button {
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.window-controls button:hover {
+    background-color: var(--hover-color);
+}
+
 #close-btn:hover {
-    background-color: rgba(231, 76, 60, 0.8) !important;
+    background-color: #e81123;
+    color: white;
 }
 
 #minimize-btn:hover {
@@ -247,306 +1055,95 @@ body.collapsed {
     background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-.app-container {
-    width: 100%;
-    height: 100%;
-    padding-top: var(--header-height);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    transition: all var(--transition-speed);
-}
-
-body.collapsed .app-container {
-    padding-top: var(--header-height);
-    height: var(--header-height);
-    overflow: hidden;
-}
-
-/* Navbar ve ana içerik */
-.navbar {
-    position: fixed;
-    bottom: 0;
+/* Client selection screen - background ekleme */
+#client-screen {
+    margin: 0;
+    padding: 10px 15px;
+    position: absolute;
+    top: var(--header-height);
     left: 0;
-    width: 100%;
-    height: var(--navbar-height);
-    background-color: rgba(70, 70, 70, 0.9) !important;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 5;
-    transition: transform var(--transition-speed), background-color var(--transition-speed);
-    opacity: 1 !important;
+    right: 0;
+    bottom: 40px;
+    overflow: auto;
+    background-color: rgba(34, 34, 34, 0.9) !important;
 }
 
-body.collapsed .navbar {
-    display: none;
-}
-
-.nav-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    width: 70px;
-    height: 100%;
-    transition: all var(--transition-speed);
-    color: rgba(255, 255, 255, 0.7);
-    position: relative;
-    gap: 5px;
-}
-
-.nav-item:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.nav-item.active {
-    color: var(--primary-color);
-    border-top: 2px solid var(--primary-color);
-}
-
-.nav-icon {
-    font-size: 12px;
-    margin-bottom: 0;
-}
-
-.nav-text {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.95) !important;
-    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
-}
-
-/* Ekranlar */
-.screen {
-    display: none;
-    width: 100%;
-    height: calc(100vh - var(--navbar-height) - var(--header-height));
-    padding: 20px;
-    overflow-y: auto;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.screen.active {
-    display: block;
-}
-
-body.collapsed .screen {
-    display: none;
-}
-
-/* İstemci Seçim Ekranı */
 .client-selection {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 15px;
-    width: 90%;
-    max-width: 700px;
-    margin: 20px auto;
-    animation: fadeIn 0.8s ease-out;
+    padding: 10px;
 }
 
 .client-card {
-    background-color: rgba(40, 40, 40, 0.9);
-    padding: 20px 15px;
-    border-radius: 12px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
     text-align: center;
     cursor: pointer;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 90px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.client-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
-    z-index: 1;
-}
-
-.client-card h3 {
-    position: relative;
-    z-index: 2;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .client-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.405);
+    transform: translateY(-4px);
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.client-card[data-selected="true"] {
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+.client-card.selected {
+    border-color: var(--accent-color);
+    background-color: var(--hover-color);
 }
 
-.client-card[data-client="lunar"] { background-color: #7f39fb; background-image: linear-gradient(135deg, #7f39fb, #6622cc); }
-.client-card[data-client="badlion"] { background-color: #4ECDC4; background-image: linear-gradient(135deg, #4ECDC4, #1a9e95); }
-.client-card[data-client="vanilla"] { background-color: #e67e22; background-image: linear-gradient(135deg, #e67e22, #d35400); }
-.client-card[data-client="labymod"] { background-color: #6B5B95; background-image: linear-gradient(135deg, #6B5B95, #4a3d72); }
-.client-card[data-client="myau"] { background-color: #88D8B0; background-image: linear-gradient(135deg, #88D8B0, #58b882); }
-.client-card[data-client="adjust"] { background-color: #FF9F1C; background-image: linear-gradient(135deg, #FF9F1C, #e08300); }
-.client-card[data-client="opal"] { background-color: #A8DADC; background-image: linear-gradient(135deg, #A8DADC, #7eb9bc); }
-.client-card[data-client="raven"] { background-color: #9b59b6; background-image: linear-gradient(135deg, #9b59b6, #8e44ad); }
-
-/* İstatistikler Ekranı */
-#api-key-form {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 20px auto;
+.client-card h3 {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-color);
 }
 
-#api-key-input {
-    flex: 1;
+/* Settings screen - background ekleme */
+#settings-screen {
+    margin: 0;
     padding: 10px 15px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background-color: rgba(0, 0, 0, 0.3);
-    color: white;
-    font-size: 14px;
-    outline: none;
-    transition: border-color var(--transition-speed);
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    overflow: auto;
+    background-color: rgba(34, 34, 34, 0.9) !important;
 }
 
-#api-key-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.3);
-}
-
-#validate-api-key {
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color var(--transition-speed);
-}
-
-#validate-api-key:hover {
-    background-color: var(--secondary-color);
-}
-
-.window-controls {
-    display: flex;
-    gap: 15px;
-    opacity: 1 !important;
-    transition: opacity var(--transition-speed);
-}
-
-body.collapsed .window-controls {
-    opacity: 1 !important;
-}
-
-.window-controls button {
-    background: none;
-    border: none;
-    color: white !important;
-    font-size: 14px;
-    cursor: pointer;
-    -webkit-app-region: no-drag;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background-color var(--transition-speed);
-}
-
-.window-controls button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Ayarlar Ekranı */
 .settings-group {
-    background-color: rgba(60, 60, 60, var(--background-opacity));
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--bg-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
 }
 
 .settings-title {
     font-size: 16px;
     font-weight: 600;
+    margin-top: 0;
     margin-bottom: 15px;
-    color: rgba(255, 255, 255, 0.95) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 10px;
-    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+    color: var(--text-color);
 }
 
 .settings-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.settings-item:last-child {
-    border-bottom: none;
+    margin-bottom: 12px;
 }
 
 .settings-label {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.95) !important;
-    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+    color: var(--text-color);
 }
 
 .settings-value {
     display: flex;
     align-items: center;
-}
-
-/* Yükleniyor */
-.loading {
-    display: none;
-    margin: 20px auto;
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    border-top-color: var(--primary-color);
-    animation: spin 1s ease-in-out infinite;
-}
-
-/* Yazılar metninin şeffaf olmaması için daha güçlü bir seçici */
-body .settings-label, 
-body .nav-text, 
-body .window-title, 
-body td, 
-body th, 
-body h2, body h3, body h4, body h5, 
-body p, body span, body label, 
-body .settings-title, 
-body button, body a, body input, body select, body option, 
-body .window-controls > * {
-    color: rgba(255, 255, 255, 0.95) !important;
-    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7) !important;
-    opacity: 1 !important;
-    mix-blend-mode: normal !important;
-    filter: none !important;
 } 

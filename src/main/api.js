@@ -16,16 +16,24 @@ async function validateApiKey(apiKey) {
     }
     
     try {
-        const response = await axios.get(`${HYPIXEL_API_URL}/key`, {
-            headers: {
-                'API-Key': apiKey
-            }
+        // /key endpoint'i artık kullanılamadığı için /player endpoint'ini test amaçlı kullanıyoruz
+        // Bu istek Hypixel'in rastgele bir oyuncusunun UUID'sini kullanarak API anahtarının geçerliliğini kontrol eder
+        const testUUID = "f7c77d999f154a66a87dc4a51ef30d19"; // Örnek UUID
+        
+        const response = await axios.get(`${HYPIXEL_PLAYER_STATS_URL}`, {
+            params: {
+                key: apiKey,
+                uuid: testUUID
+            },
+            timeout: 10000 // 10 saniye timeout
         });
 
-        consoled.bright.green('API anahtarı doğrulandı');
-        return response.data.success === true;
+        if (response.data && response.data.success === true) {
+            return true;
+        } else {
+            return false;
+        }
     } catch (error) {
-        consoled.bright.red('API anahtarı doğrulama hatası:', error.message);
         return false;
     }
 }

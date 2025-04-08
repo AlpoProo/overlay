@@ -13,6 +13,27 @@ export function initSettings(appState, updateState) {
         const alwaysOnTopCheckbox = document.getElementById('always-on-top');
         const gameTypeSelect = document.getElementById('game-type');
         const autoDetectGameCheckbox = document.getElementById('auto-detect-game');
+        const themeToggleCheckbox = document.getElementById('theme-toggle');
+        
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            if (themeToggleCheckbox) themeToggleCheckbox.checked = true;
+        }
+        
+        // Theme toggle function
+        if (themeToggleCheckbox) {
+            themeToggleCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.add('light-theme');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.body.classList.remove('light-theme');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
         
         // API key validation
         if (validateApiKeyBtn) {

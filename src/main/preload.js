@@ -15,7 +15,8 @@ const validChannels = [
     'change-game-type',
     'toggle-always-on-top',
     'toggle-auto-detect-game',
-    'toggle-collapsed-mode'
+    'toggle-collapsed-mode',
+    'no-who-command'
 ];
 
 contextBridge.exposeInMainWorld('Electron', {

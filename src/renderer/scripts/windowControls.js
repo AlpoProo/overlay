@@ -147,6 +147,14 @@ function updateUIForCollapsedMode() {
         windowFrame.style.backgroundColor = 'rgba(40, 40, 40, 0.9)';
         windowFrame.style.pointerEvents = 'auto'; // Fare olaylarını yakala
         windowFrame.style.zIndex = '9999';
+        windowFrame.style.width = '300px'; // Pencere genişliğiyle aynı
+        windowFrame.style.height = '30px';
+        windowFrame.style.position = 'fixed';
+        windowFrame.style.top = '0';
+        windowFrame.style.left = '0';
+        windowFrame.style.borderRadius = '5px';
+        windowFrame.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.5)';
+        windowFrame.style.cursor = 'default';
     }
     
     // Pencere kontrollerini görünür ve tıklanabilir tut
@@ -156,6 +164,10 @@ function updateUIForCollapsedMode() {
         windowControls.style.visibility = 'visible';
         windowControls.style.pointerEvents = 'auto';
         windowControls.style.zIndex = '10000';
+        windowControls.style.position = 'fixed';
+        windowControls.style.right = '5px';
+        windowControls.style.top = '0';
+        windowControls.style.display = 'flex';
     }
     
     // Başlık metnini görünür tut
@@ -165,6 +177,9 @@ function updateUIForCollapsedMode() {
         windowTitle.style.visibility = 'visible';
         windowTitle.style.pointerEvents = 'auto';
         windowTitle.style.zIndex = '9999';
+        windowTitle.style.fontWeight = 'bold';
+        windowTitle.style.paddingLeft = '10px';
+        windowTitle.style.cursor = 'move'; // Sürüklenebilir gibi görünsün
     }
     
     // Tüm kontrol düğmelerini özel olarak yapılandır
@@ -175,17 +190,34 @@ function updateUIForCollapsedMode() {
             btn.style.visibility = 'visible';
             btn.style.zIndex = '10001';
             btn.style.position = 'relative';
+            btn.style.cursor = 'pointer';
         }
     });
     
-    // Diğer içeriği gizle
+    // Diğer içeriği tamamen gizle
     document.querySelectorAll('.app-container, #stats-screen, #client-screen, #settings-screen, .navbar, table').forEach(el => {
         if (el) {
             el.style.opacity = '0';
             el.style.visibility = 'hidden';
+            el.style.height = '0';
+            el.style.overflow = 'hidden';
             el.style.pointerEvents = 'none';
+            el.style.position = 'absolute';
+            el.style.top = '-9999px';
         }
     });
+    
+    // Body stilini sadece başlık çubuğunu gösterecek şekilde güncelle
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '30px';
+    document.body.style.minHeight = '30px';
+    document.body.style.resize = 'none';
+    document.body.style.pointerEvents = 'auto'; // Body tıklanabilir olsun ama içeriği değil
+    
+    // Body'yi daraltılmış modda olduğunu göstermek için collapsed sınıfı ekle
+    document.body.classList.add('collapsed');
+    
+    console.log('Daraltılmış mod UI güncellemeleri tamamlandı');
 }
 
 // Normal mod için UI güncellemeleri

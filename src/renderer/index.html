@@ -37,6 +37,19 @@
                     <!-- Stats will be displayed here -->
                 </tbody>
             </table>
+            
+            <!-- Player Details -->
+            <div id="player-details" class="player-details-panel">
+                <div class="player-details-header">
+                    <h3 id="player-details-name">Player Details</h3>
+                    <button id="close-details">×</button>
+                </div>
+                <div class="player-details-content">
+                    <div class="player-stats-grid">
+                        <!-- Stats will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Client Selection Screen -->
@@ -92,6 +105,13 @@
                     <span class="settings-label">Always on top</span>
                     <div class="settings-value">
                         <input type="checkbox" id="always-on-top" checked>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <span class="settings-label">Light Theme</span>
+                    <div class="settings-value">
+                        <input type="checkbox" id="theme-toggle">
                     </div>
                 </div>
             </div>
