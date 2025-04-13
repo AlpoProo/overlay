@@ -2,7 +2,6 @@
 
 Minecraft Hypixel sunucusunda oynarken, oyuncu istatistiklerini gerçek zamanlı görebilmenizi sağlayan bir masaüstü uygulaması.
 
-![Uygulama](assets/overlay-screenshot.png)
 
 ## Özellikler
 
