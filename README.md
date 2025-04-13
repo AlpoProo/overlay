@@ -2,7 +2,6 @@
 
 Minecraft Hypixel sunucusunda oynarken, oyuncu istatistiklerini gerçek zamanlı görebilmenizi sağlayan bir masaüstü uygulaması.
 
-
 ## Özellikler
 
 - Hypixel'de `/who` komutu ile oyuncu istatistiklerini görüntüleme
@@ -19,11 +18,29 @@ Minecraft Hypixel sunucusunda oynarken, oyuncu istatistiklerini gerçek zamanlı
 
 ## Kurulum
 
-1. [Sürümler](https://github.com/yourusername/minecraft-hypixel-overlay/releases) sayfasından en son sürümü indirin
-2. İndirilen dosyayı açın ve uygulamayı çalıştırın
-3. Hypixel API anahtarınızı girin (API anahtarını [api.hypixel.net](https://api.hypixel.net) adresinden alabilirsiniz)
-4. Minecraft istemcinizi seçin
-5. Minecraft'ta `/who` komutunu kullanarak oyuncu istatistiklerini görüntüleyin
+1. Projeyi klonlayın:
+   ```bash
+   git clone https://github.com/AlpoProo/overlay.git
+   ```
+
+2. Proje klasörüne girin:
+   ```bash
+   cd overlay
+   ```
+
+3. Bağımlılıkları yükleyin:
+   ```bash
+   npm install
+   ```
+
+4. Uygulamayı başlatın:
+   ```bash
+   npm start
+   ```
+
+5. Hypixel API anahtarınızı girin (API anahtarını [api.hypixel.net](https://api.hypixel.net) adresinden alabilirsiniz)
+6. Minecraft istemcinizi seçin
+7. Minecraft'ta `/who` komutunu kullanarak oyuncu istatistiklerini görüntüleyin
 
 ## Kullanım
 
@@ -41,28 +58,15 @@ Minecraft Hypixel sunucusunda oynarken, oyuncu istatistiklerini gerçek zamanlı
 - Node.js (v16+)
 - npm
 
-### Projeyi Çalıştırma
+### Geliştirme Modunda Çalıştırma
 
 ```bash
-# Depoyu klonlayın
-git clone https://github.com/yourusername/minecraft-hypixel-overlay.git
-
-# Klasöre gidin
-cd minecraft-hypixel-overlay
-
-# Bağımlılıkları yükleyin
-npm install
-
 # Geliştirme modunda başlatın
 npm run dev
 ```
-
-## Lisans
-
-ISC Lisansı altında dağıtılmaktadır. Daha fazla bilgi için `LICENSE` dosyasına bakın.
 
 ## İletişim ve Katkıda Bulunma
 
 - Bu projeye katkıda bulunmak için bir Pull Request oluşturun
 - Hataları bildirmek veya özellik istemek için GitHub Issues kullanın
-- [GitHub Profili](https://github.com/yourusername) 
+- [GitHub Profili](https://github.com/AlpoProo) 
